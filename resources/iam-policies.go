@@ -9,7 +9,7 @@ import (
 )
 
 type IAMPolicy struct {
-	svc      *iam.IAM
+	svc      iamiface.IAMAPI
 	name     string
 	policyId string
 	arn      string
