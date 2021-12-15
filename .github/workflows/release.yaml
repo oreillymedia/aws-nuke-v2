@@ -1,13 +1,12 @@
-name: Publish release artifacts
+name: release
 
 on:
   release:
     types: [created]
 
 jobs:
-  update_readme:
-    name: Update Readme
-    runs-on: ubuntu-22.04
+  goreleaser:
+    runs-on: ubuntu-latest
     steps:
     - name: Checkout code
       uses: actions/checkout@v4
