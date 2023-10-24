@@ -2,6 +2,7 @@ package resources
 
 import (
 	"fmt"
+	"github.com/aws/smithy-go/ptr"
 
 	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/aws/aws-sdk-go/service/route53resolver"
