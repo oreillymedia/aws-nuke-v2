@@ -1,31 +1,43 @@
 package resources
 
 import (
+	"context"
+
 	"github.com/aws/aws-sdk-go/aws"
-	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/aws/aws-sdk-go/service/dynamodb"
-	"github.com/rebuy-de/aws-nuke/v2/pkg/types"
+
+	"github.com/ekristen/libnuke/pkg/resource"
+	"github.com/ekristen/libnuke/pkg/types"
+
+	"github.com/ekristen/aws-nuke/pkg/nuke"
 )
 
-type DynamoDBTable struct {
-	svc  *dynamodb.DynamoDB
-	id   string
-	tags []*dynamodb.Tag
-}
+const DynamoDBTableResource = "DynamoDBTable"
 
 func init() {
-	register("DynamoDBTable", ListDynamoDBTables)
+	resource.Register(resource.Registration{
+		Name:   DynamoDBTableResource,
+		Scope:  nuke.Account,
+		Lister: &DynamoDBTableLister{},
+		DependsOn: []string{
+			DynamoDBTableItemResource,
+		},
+	})
 }
 
-func ListDynamoDBTables(sess *session.Session) ([]Resource, error) {
-	svc := dynamodb.New(sess)
+type DynamoDBTableLister struct{}
+
+func (l *DynamoDBTableLister) List(_ context.Context, o interface{}) ([]resource.Resource, error) {
+	opts := o.(*nuke.ListerOpts)
+
+	svc := dynamodb.New(opts.Session)
 
 	resp, err := svc.ListTables(&dynamodb.ListTablesInput{})
 	if err != nil {
 		return nil, err
 	}
 
-	resources := make([]Resource, 0)
+	resources := make([]resource.Resource, 0)
 	for _, tableName := range resp.TableNames {
 		tags, err := GetTableTags(svc, tableName)
 
@@ -43,7 +55,13 @@ func ListDynamoDBTables(sess *session.Session) ([]Resource, error) {
 	return resources, nil
 }
 
-func (i *DynamoDBTable) Remove() error {
+type DynamoDBTable struct {
+	svc  *dynamodb.DynamoDB
+	id   string
+	tags []*dynamodb.Tag
+}
+
+func (i *DynamoDBTable) Remove(_ context.Context) error {
 	params := &dynamodb.DeleteTableInput{
 		TableName: aws.String(i.id),
 	}

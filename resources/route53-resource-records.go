@@ -1,12 +1,17 @@
 package resources
 
 import (
+	"context"
+
 	"fmt"
 
 	"github.com/aws/aws-sdk-go/aws"
-	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/aws/aws-sdk-go/service/route53"
-	"github.com/rebuy-de/aws-nuke/v2/pkg/types"
+
+	"github.com/ekristen/libnuke/pkg/resource"
+	"github.com/ekristen/libnuke/pkg/types"
+
+	"github.com/ekristen/aws-nuke/pkg/nuke"
 )
 
 type Route53ResourceRecordSet struct {
@@ -19,21 +24,30 @@ type Route53ResourceRecordSet struct {
 }
 
 func init() {
-	register("Route53ResourceRecordSet", ListRoute53ResourceRecordSets)
+	resource.Register(resource.Registration{
+		Name:   Route53ResourceRecordSetResource,
+		Scope:  nuke.Account,
+		Lister: &Route53ResourceRecordSetLister{},
+	})
 }
 
-func ListRoute53ResourceRecordSets(sess *session.Session) ([]Resource, error) {
-	svc := route53.New(sess)
+type Route53ResourceRecordSetLister struct{}
 
-	resources := make([]Resource, 0)
+func (l *Route53ResourceRecordSetLister) List(ctx context.Context, o interface{}) ([]resource.Resource, error) {
+	opts := o.(*nuke.ListerOpts)
 
-	sub, err := ListRoute53HostedZones(sess)
+	svc := route53.New(opts.Session)
+
+	resources := make([]resource.Resource, 0)
+
+	zoneLister := &Route53HostedZoneLister{}
+	sub, err := zoneLister.List(ctx, o)
 	if err != nil {
 		return nil, err
 	}
 
-	for _, resource := range sub {
-		zone := resource.(*Route53HostedZone)
+	for _, r := range sub {
+		zone := r.(*Route53HostedZone)
 		rrs, err := ListResourceRecordsForZone(svc, zone.id, zone.name)
 		if err != nil {
 			return nil, err
@@ -45,7 +59,7 @@ func ListRoute53ResourceRecordSets(sess *session.Session) ([]Resource, error) {
 	return resources, nil
 }
 
-func ListResourceRecordsForZone(svc *route53.Route53, zoneId *string, zoneName *string) ([]Resource, error) {
+func ListResourceRecordsForZone(svc *route53.Route53, zoneId *string, zoneName *string) ([]resource.Resource, error) {
 	params := &route53.ListResourceRecordSetsInput{
 		HostedZoneId: zoneId,
 	}
@@ -89,6 +103,14 @@ func ListResourceRecordsForZone(svc *route53.Route53, zoneId *string, zoneName *
 	return resources, nil
 }
 
+type Route53ResourceRecordSet struct {
+	svc            *route53.Route53
+	hostedZoneId   *string
+	hostedZoneName *string
+	data           *route53.ResourceRecordSet
+	changeId       *string
+}
+
 func (r *Route53ResourceRecordSet) Filter() error {
 	if *r.data.Type == "NS" && *r.hostedZoneName == *r.data.Name {
 		return fmt.Errorf("cannot delete NS record")
@@ -101,7 +123,7 @@ func (r *Route53ResourceRecordSet) Filter() error {
 	return nil
 }
 
-func (r *Route53ResourceRecordSet) Remove() error {
+func (r *Route53ResourceRecordSet) Remove(_ context.Context) error {
 	params := &route53.ChangeResourceRecordSetsInput{
 		HostedZoneId: r.hostedZoneId,
 		ChangeBatch: &route53.ChangeBatch{

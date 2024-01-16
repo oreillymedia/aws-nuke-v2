@@ -1,15 +1,28 @@
 package resources
 
 import (
+	"context"
+
 	"github.com/aws/aws-sdk-go/aws"
-	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/aws/aws-sdk-go/service/costandusagereportservice"
-	"github.com/rebuy-de/aws-nuke/v2/pkg/types"
+
+	"github.com/ekristen/libnuke/pkg/resource"
+	"github.com/ekristen/libnuke/pkg/types"
+
+	"github.com/ekristen/aws-nuke/pkg/nuke"
 )
 
+const BillingCostandUsageReportResource = "BillingCostandUsageReport"
+
 func init() {
-	register("BillingCostandUsageReport", ListBillingCostandUsageReports)
+	resource.Register(resource.Registration{
+		Name:   BillingCostandUsageReportResource,
+		Scope:  nuke.Account,
+		Lister: &BillingCostandUsageReportLister{},
+	})
 }
+
+type BillingCostandUsageReportLister struct{}
 
 type BillingCostandUsageReport struct {
 	svc        *costandusagereportservice.CostandUsageReportService
@@ -19,8 +32,10 @@ type BillingCostandUsageReport struct {
 	s3Region   *string
 }
 
-func ListBillingCostandUsageReports(sess *session.Session) ([]Resource, error) {
-	svc := costandusagereportservice.New(sess)
+func (l *BillingCostandUsageReportLister) List(_ context.Context, o interface{}) ([]resource.Resource, error) {
+	opts := o.(*nuke.ListerOpts)
+
+	svc := costandusagereportservice.New(opts.Session)
 	params := &costandusagereportservice.DescribeReportDefinitionsInput{
 		MaxResults: aws.Int64(5),
 	}
@@ -36,7 +51,7 @@ func ListBillingCostandUsageReports(sess *session.Session) ([]Resource, error) {
 		return nil, err
 	}
 
-	resources := []Resource{}
+	resources := make([]resource.Resource, 0)
 	for _, report := range reports {
 		resources = append(resources, &BillingCostandUsageReport{
 			svc:        svc,
@@ -50,7 +65,7 @@ func ListBillingCostandUsageReports(sess *session.Session) ([]Resource, error) {
 	return resources, nil
 }
 
-func (r *BillingCostandUsageReport) Remove() error {
+func (r *BillingCostandUsageReport) Remove(_ context.Context) error {
 	_, err := r.svc.DeleteReportDefinition(&costandusagereportservice.DeleteReportDefinitionInput{
 		ReportName: r.reportName,
 	})

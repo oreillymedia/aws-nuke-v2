@@ -1,8 +1,9 @@
 package resources
 
 import (
+	"context"
+
 	"github.com/aws/aws-sdk-go/aws"
-	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/aws/aws-sdk-go/service/firehose"
 	"github.com/rebuy-de/aws-nuke/v2/pkg/types"
 )
@@ -14,7 +15,11 @@ type FirehoseDeliveryStream struct {
 }
 
 func init() {
-	register("FirehoseDeliveryStream", ListFirehoseDeliveryStreams)
+	resource.Register(resource.Registration{
+		Name:   FirehoseDeliveryStreamResource,
+		Scope:  nuke.Account,
+		Lister: &FirehoseDeliveryStreamLister{},
+	})
 }
 
 func ListFirehoseDeliveryStreams(sess *session.Session) ([]Resource, error) {
@@ -72,8 +77,12 @@ func ListFirehoseDeliveryStreams(sess *session.Session) ([]Resource, error) {
 	return resources, nil
 }
 
-func (f *FirehoseDeliveryStream) Remove() error {
+type FirehoseDeliveryStream struct {
+	svc                *firehose.Firehose
+	deliveryStreamName *string
+}
 
+func (f *FirehoseDeliveryStream) Remove(_ context.Context) error {
 	_, err := f.svc.DeleteDeliveryStream(&firehose.DeleteDeliveryStreamInput{
 		DeliveryStreamName: f.deliveryStreamName,
 	})

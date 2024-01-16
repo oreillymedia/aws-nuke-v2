@@ -10,18 +10,23 @@ import (
 	"github.com/sirupsen/logrus"
 )
 
-type MachineLearningMLModel struct {
-	svc *machinelearning.MachineLearning
-	ID  *string
-}
+const MachineLearningMLModelResource = "MachineLearningMLModel"
 
 func init() {
-	register("MachineLearningMLModel", ListMachineLearningMLModels)
+	resource.Register(resource.Registration{
+		Name:   MachineLearningMLModelResource,
+		Scope:  nuke.Account,
+		Lister: &MachineLearningMLModelLister{},
+	})
 }
 
-func ListMachineLearningMLModels(sess *session.Session) ([]Resource, error) {
-	svc := machinelearning.New(sess)
-	resources := []Resource{}
+type MachineLearningMLModelLister struct{}
+
+func (l *MachineLearningMLModelLister) List(_ context.Context, o interface{}) ([]resource.Resource, error) {
+	opts := o.(*nuke.ListerOpts)
+
+	svc := machinelearning.New(opts.Session)
+	resources := make([]resource.Resource, 0)
 
 	params := &machinelearning.DescribeMLModelsInput{
 		Limit: aws.Int64(100),
@@ -56,8 +61,12 @@ func ListMachineLearningMLModels(sess *session.Session) ([]Resource, error) {
 	return resources, nil
 }
 
-func (f *MachineLearningMLModel) Remove() error {
+type MachineLearningMLModel struct {
+	svc *machinelearning.MachineLearning
+	ID  *string
+}
 
+func (f *MachineLearningMLModel) Remove(_ context.Context) error {
 	_, err := f.svc.DeleteMLModel(&machinelearning.DeleteMLModelInput{
 		MLModelId: f.ID,
 	})

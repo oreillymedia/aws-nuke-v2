@@ -1,23 +1,33 @@
 package resources
 
 import (
+	"context"
+
 	"github.com/aws/aws-sdk-go/aws"
-	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/aws/aws-sdk-go/service/sfn"
+
+	"github.com/ekristen/libnuke/pkg/resource"
+
+	"github.com/ekristen/aws-nuke/pkg/nuke"
 )
 
-type SFNStateMachine struct {
-	svc *sfn.SFN
-	ARN *string
-}
+const SFNStateMachineResource = "SFNStateMachine"
 
 func init() {
-	register("SFNStateMachine", ListSFNStateMachines)
+	resource.Register(resource.Registration{
+		Name:   SFNStateMachineResource,
+		Scope:  nuke.Account,
+		Lister: &SFNStateMachineLister{},
+	})
 }
 
-func ListSFNStateMachines(sess *session.Session) ([]Resource, error) {
-	svc := sfn.New(sess)
-	resources := []Resource{}
+type SFNStateMachineLister struct{}
+
+func (l *SFNStateMachineLister) List(_ context.Context, o interface{}) ([]resource.Resource, error) {
+	opts := o.(*nuke.ListerOpts)
+
+	svc := sfn.New(opts.Session)
+	resources := make([]resource.Resource, 0)
 
 	params := &sfn.ListStateMachinesInput{
 		MaxResults: aws.Int64(100),
@@ -69,6 +79,7 @@ func (f *SFNStateMachine) Remove() error {
 		params.NextToken = executions.NextToken
 	}
 
+func (f *SFNStateMachine) Remove(_ context.Context) error {
 	_, err := f.svc.DeleteStateMachine(&sfn.DeleteStateMachineInput{
 		StateMachineArn: f.ARN,
 	})

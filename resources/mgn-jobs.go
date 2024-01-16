@@ -1,27 +1,33 @@
 package resources
 
 import (
+	"context"
+
+	"errors"
 	"github.com/aws/aws-sdk-go/aws"
-	"github.com/aws/aws-sdk-go/aws/session"
+	"github.com/aws/aws-sdk-go/aws/awserr"
 	"github.com/aws/aws-sdk-go/service/mgn"
 	"github.com/rebuy-de/aws-nuke/v2/pkg/types"
 	"github.com/sirupsen/logrus"
 )
 
-type MGNJob struct {
-	svc   *mgn.Mgn
-	jobID *string
-	arn   *string
-	tags  map[string]*string
-}
+const MGNJobResource = "MGNJob"
 
 func init() {
-	register("MGNJob", ListMGNJobs)
+	resource.Register(resource.Registration{
+		Name:   MGNJobResource,
+		Scope:  nuke.Account,
+		Lister: &MGNJobLister{},
+	})
 }
 
-func ListMGNJobs(sess *session.Session) ([]Resource, error) {
-	svc := mgn.New(sess)
-	resources := []Resource{}
+type MGNJobLister struct{}
+
+func (l *MGNJobLister) List(_ context.Context, o interface{}) ([]resource.Resource, error) {
+	opts := o.(*nuke.ListerOpts)
+
+	svc := mgn.New(opts.Session)
+	resources := make([]resource.Resource, 0)
 
 	params := &mgn.DescribeJobsInput{
 		MaxResults: aws.Int64(50),
@@ -56,8 +62,14 @@ func ListMGNJobs(sess *session.Session) ([]Resource, error) {
 	return resources, nil
 }
 
-func (f *MGNJob) Remove() error {
+type MGNJob struct {
+	svc   *mgn.Mgn
+	jobID *string
+	arn   *string
+	tags  map[string]*string
+}
 
+func (f *MGNJob) Remove(_ context.Context) error {
 	_, err := f.svc.DeleteJob(&mgn.DeleteJobInput{
 		JobID: f.jobID,
 	})
@@ -73,6 +85,7 @@ func (f *MGNJob) Properties() types.Properties {
 	for key, val := range f.tags {
 		properties.SetTag(&key, val)
 	}
+
 	return properties
 }
 

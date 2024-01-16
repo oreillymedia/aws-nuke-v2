@@ -5,8 +5,25 @@ import (
 
 	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/aws/aws-sdk-go/service/ec2"
-	"github.com/rebuy-de/aws-nuke/v2/pkg/types"
+
+	"github.com/ekristen/libnuke/pkg/resource"
+	"github.com/ekristen/libnuke/pkg/types"
+
+	"github.com/ekristen/aws-nuke/pkg/nuke"
 )
+
+const EC2RouteTableResource = "EC2RouteTable"
+
+func init() {
+	resource.Register(resource.Registration{
+		Name:   EC2RouteTableResource,
+		Scope:  nuke.Account,
+		Lister: &EC2RouteTableLister{},
+		DependsOn: []string{
+			EC2SubnetResource,
+		},
+	})
+}
 
 type EC2RouteTable struct {
 	svc        *ec2.EC2
@@ -15,12 +32,12 @@ type EC2RouteTable struct {
 	ownerID    *string
 }
 
-func init() {
-	register("EC2RouteTable", ListEC2RouteTables)
-}
+type EC2RouteTableLister struct{}
 
-func ListEC2RouteTables(sess *session.Session) ([]Resource, error) {
-	svc := ec2.New(sess)
+func (l *EC2RouteTableLister) List(_ context.Context, o interface{}) ([]resource.Resource, error) {
+	opts := o.(*nuke.ListerOpts)
+
+	svc := ec2.New(opts.Session)
 
 	resp, err := svc.DescribeRouteTables(nil)
 	if err != nil {
@@ -29,11 +46,16 @@ func ListEC2RouteTables(sess *session.Session) ([]Resource, error) {
 
 	defVpcId := ""
 	if defVpc := DefaultVpc(svc); defVpc != nil {
-		defVpcId = *defVpc.VpcId
+		defVpcId = ptr.ToString(defVpc.VpcId)
 	}
 
-	resources := make([]Resource, 0)
+	resources := make([]resource.Resource, 0)
 	for _, out := range resp.RouteTables {
+		vpc, err := GetVPC(svc, out.VpcId)
+		if err != nil {
+			return resources, nil
+		}
+
 		resources = append(resources, &EC2RouteTable{
 			svc:        svc,
 			routeTable: out,
@@ -70,6 +92,10 @@ func (e *EC2RouteTable) Remove() error {
 
 func (e *EC2RouteTable) Properties() types.Properties {
 	properties := types.NewProperties()
+
+	properties.Set("DefaultVPC", e.defaultVPC)
+	properties.Set("vpcID", e.routeTable.VpcId)
+
 	for _, tagValue := range e.routeTable.Tags {
 		properties.SetTag(tagValue.Key, tagValue.Value)
 	}
@@ -79,5 +105,5 @@ func (e *EC2RouteTable) Properties() types.Properties {
 }
 
 func (e *EC2RouteTable) String() string {
-	return *e.routeTable.RouteTableId
+	return ptr.ToString(e.routeTable.RouteTableId)
 }

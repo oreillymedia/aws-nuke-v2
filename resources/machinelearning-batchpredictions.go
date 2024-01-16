@@ -10,18 +10,23 @@ import (
 	"github.com/sirupsen/logrus"
 )
 
-type MachineLearningBranchPrediction struct {
-	svc *machinelearning.MachineLearning
-	ID  *string
-}
+const MachineLearningBranchPredictionResource = "MachineLearningBranchPrediction"
 
 func init() {
-	register("MachineLearningBranchPrediction", ListMachineLearningBranchPredictions)
+	resource.Register(resource.Registration{
+		Name:   MachineLearningBranchPredictionResource,
+		Scope:  nuke.Account,
+		Lister: &MachineLearningBranchPredictionLister{},
+	})
 }
 
-func ListMachineLearningBranchPredictions(sess *session.Session) ([]Resource, error) {
-	svc := machinelearning.New(sess)
-	resources := []Resource{}
+type MachineLearningBranchPredictionLister struct{}
+
+func (l *MachineLearningBranchPredictionLister) List(_ context.Context, o interface{}) ([]resource.Resource, error) {
+	opts := o.(*nuke.ListerOpts)
+
+	svc := machinelearning.New(opts.Session)
+	resources := make([]resource.Resource, 0)
 
 	params := &machinelearning.DescribeBatchPredictionsInput{
 		Limit: aws.Int64(100),
@@ -56,8 +61,12 @@ func ListMachineLearningBranchPredictions(sess *session.Session) ([]Resource, er
 	return resources, nil
 }
 
-func (f *MachineLearningBranchPrediction) Remove() error {
+type MachineLearningBranchPrediction struct {
+	svc *machinelearning.MachineLearning
+	ID  *string
+}
 
+func (f *MachineLearningBranchPrediction) Remove(_ context.Context) error {
 	_, err := f.svc.DeleteBatchPrediction(&machinelearning.DeleteBatchPredictionInput{
 		BatchPredictionId: f.ID,
 	})
