@@ -15,7 +15,7 @@ import (
 const ElasticacheSubnetGroupResource = "ElasticacheSubnetGroup"
 
 func init() {
-	resource.Register(resource.Registration{
+	resource.Register(&resource.Registration{
 		Name:   ElasticacheSubnetGroupResource,
 		Scope:  nuke.Account,
 		Lister: &ElasticacheSubnetGroupLister{},

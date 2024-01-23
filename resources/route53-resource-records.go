@@ -24,7 +24,7 @@ type Route53ResourceRecordSet struct {
 }
 
 func init() {
-	resource.Register(resource.Registration{
+	resource.Register(&resource.Registration{
 		Name:   Route53ResourceRecordSetResource,
 		Scope:  nuke.Account,
 		Lister: &Route53ResourceRecordSetLister{},

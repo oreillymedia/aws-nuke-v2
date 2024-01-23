@@ -10,7 +10,7 @@ import (
 const DAXSubnetGroupResource = "DAXSubnetGroup"
 
 func init() {
-	resource.Register(resource.Registration{
+	resource.Register(&resource.Registration{
 		Name:   DAXSubnetGroupResource,
 		Scope:  nuke.Account,
 		Lister: &DAXSubnetGroupLister{},

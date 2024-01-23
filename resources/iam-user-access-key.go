@@ -18,10 +18,13 @@ import (
 const IAMUserAccessKeyResource = "IAMUserAccessKey"
 
 func init() {
-	resource.Register(resource.Registration{
+	resource.Register(&resource.Registration{
 		Name:   IAMUserAccessKeyResource,
 		Scope:  nuke.Account,
 		Lister: &IAMUserAccessKeyLister{},
+		DeprecatedAliases: []string{
+			"IamUserAccessKeys",
+		},
 	})
 }
 

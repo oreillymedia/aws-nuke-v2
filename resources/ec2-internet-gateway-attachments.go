@@ -27,10 +27,13 @@ type EC2InternetGatewayAttachment struct {
 }
 
 func init() {
-	resource.Register(resource.Registration{
+	resource.Register(&resource.Registration{
 		Name:   EC2InternetGatewayAttachmentResource,
 		Scope:  nuke.Account,
 		Lister: &EC2InternetGatewayAttachmentLister{},
+		DeprecatedAliases: []string{
+			"EC2InternetGatewayAttachement",
+		},
 	})
 }
 

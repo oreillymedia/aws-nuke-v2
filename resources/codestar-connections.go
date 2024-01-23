@@ -20,7 +20,7 @@ type CodeStarConnection struct {
 }
 
 func init() {
-	resource.Register(resource.Registration{
+	resource.Register(&resource.Registration{
 		Name:   CodeStarConnectionResource,
 		Scope:  nuke.Account,
 		Lister: &CodeStarConnectionLister{},

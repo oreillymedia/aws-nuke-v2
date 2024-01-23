@@ -19,10 +19,13 @@ type EC2VPNConnection struct {
 }
 
 func init() {
-	resource.Register(resource.Registration{
+	resource.Register(&resource.Registration{
 		Name:   EC2VPNConnectionResource,
 		Scope:  nuke.Account,
 		Lister: &EC2VPNConnectionLister{},
+		DeprecatedAliases: []string{
+			"EC2VpnConnection",
+		},
 	})
 }
 

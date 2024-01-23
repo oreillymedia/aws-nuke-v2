@@ -16,7 +16,7 @@ import (
 const IAMUserResource = "IAMUser"
 
 func init() {
-	resource.Register(resource.Registration{
+	resource.Register(&resource.Registration{
 		Name:   IAMUserResource,
 		Scope:  nuke.Account,
 		Lister: &IAMUsersLister{},
@@ -26,6 +26,9 @@ func init() {
 			IAMUserGroupAttachmentResource,
 			IAMUserPolicyAttachmentResource,
 			IAMVirtualMFADeviceResource,
+		},
+		DeprecatedAliases: []string{
+			"IamUser",
 		},
 	})
 }

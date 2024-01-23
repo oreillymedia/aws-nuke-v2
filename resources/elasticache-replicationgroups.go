@@ -15,7 +15,7 @@ type ElasticacheReplicationGroup struct {
 }
 
 func init() {
-	resource.Register(resource.Registration{
+	resource.Register(&resource.Registration{
 		Name:   ElasticacheReplicationGroupResource,
 		Scope:  nuke.Account,
 		Lister: &ElasticacheReplicationGroupLister{},

@@ -21,7 +21,7 @@ type EC2DefaultSecurityGroupRule struct {
 }
 
 func init() {
-	resource.Register(resource.Registration{
+	resource.Register(&resource.Registration{
 		Name:   EC2DefaultSecurityGroupRuleResource,
 		Scope:  nuke.Account,
 		Lister: &EC2DefaultSecurityGroupRuleLister{},

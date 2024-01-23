@@ -14,7 +14,7 @@ import (
 const MGNJobResource = "MGNJob"
 
 func init() {
-	resource.Register(resource.Registration{
+	resource.Register(&resource.Registration{
 		Name:   MGNJobResource,
 		Scope:  nuke.Account,
 		Lister: &MGNJobLister{},
