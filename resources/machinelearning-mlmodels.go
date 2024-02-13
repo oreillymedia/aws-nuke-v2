@@ -13,7 +13,7 @@ import (
 const MachineLearningMLModelResource = "MachineLearningMLModel"
 
 func init() {
-	resource.Register(&resource.Registration{
+	registry.Register(&registry.Registration{
 		Name:   MachineLearningMLModelResource,
 		Scope:  nuke.Account,
 		Lister: &MachineLearningMLModelLister{},

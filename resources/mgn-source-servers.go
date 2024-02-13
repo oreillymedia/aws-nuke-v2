@@ -14,7 +14,7 @@ import (
 const MGNSourceServerResource = "MGNSourceServer"
 
 func init() {
-	resource.Register(&resource.Registration{
+	registry.Register(&registry.Registration{
 		Name:   MGNSourceServerResource,
 		Scope:  nuke.Account,
 		Lister: &MGNSourceServerLister{},

@@ -14,7 +14,7 @@ import (
 const FMSPolicyResource = "FMSPolicy"
 
 func init() {
-	resource.Register(&resource.Registration{
+	registry.Register(&registry.Registration{
 		Name:   FMSPolicyResource,
 		Scope:  nuke.Account,
 		Lister: &FMSPolicyLister{},

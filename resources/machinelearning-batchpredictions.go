@@ -13,7 +13,7 @@ import (
 const MachineLearningBranchPredictionResource = "MachineLearningBranchPrediction"
 
 func init() {
-	resource.Register(&resource.Registration{
+	registry.Register(&registry.Registration{
 		Name:   MachineLearningBranchPredictionResource,
 		Scope:  nuke.Account,
 		Lister: &MachineLearningBranchPredictionLister{},

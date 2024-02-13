@@ -8,6 +8,7 @@ import (
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/service/route53"
 
+	"github.com/ekristen/libnuke/pkg/registry"
 	"github.com/ekristen/libnuke/pkg/resource"
 	"github.com/ekristen/libnuke/pkg/types"
 
@@ -24,7 +25,7 @@ type Route53ResourceRecordSet struct {
 }
 
 func init() {
-	resource.Register(&resource.Registration{
+	registry.Register(&registry.Registration{
 		Name:   Route53ResourceRecordSetResource,
 		Scope:  nuke.Account,
 		Lister: &Route53ResourceRecordSetLister{},

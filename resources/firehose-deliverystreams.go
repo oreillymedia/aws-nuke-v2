@@ -15,7 +15,7 @@ type FirehoseDeliveryStream struct {
 }
 
 func init() {
-	resource.Register(&resource.Registration{
+	registry.Register(&registry.Registration{
 		Name:   FirehoseDeliveryStreamResource,
 		Scope:  nuke.Account,
 		Lister: &FirehoseDeliveryStreamLister{},

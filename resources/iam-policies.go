@@ -14,7 +14,7 @@ import (
 const IAMPolicyResource = "IAMPolicy"
 
 func init() {
-	resource.Register(&resource.Registration{
+	registry.Register(&registry.Registration{
 		Name:   IAMPolicyResource,
 		Scope:  nuke.Account,
 		Lister: &IAMPolicyLister{},

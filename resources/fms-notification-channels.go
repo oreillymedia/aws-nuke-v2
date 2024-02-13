@@ -12,7 +12,7 @@ import (
 const FMSNotificationChannelResource = "FMSNotificationChannel"
 
 func init() {
-	resource.Register(&resource.Registration{
+	registry.Register(&registry.Registration{
 		Name:   FMSNotificationChannelResource,
 		Scope:  nuke.Account,
 		Lister: &FMSNotificationChannelLister{},

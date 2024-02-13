@@ -13,7 +13,7 @@ import (
 const MachineLearningEvaluationResource = "MachineLearningEvaluation"
 
 func init() {
-	resource.Register(&resource.Registration{
+	registry.Register(&registry.Registration{
 		Name:   MachineLearningEvaluationResource,
 		Scope:  nuke.Account,
 		Lister: &MachineLearningEvaluationLister{},
