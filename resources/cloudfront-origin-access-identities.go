@@ -19,20 +19,18 @@ func ListCloudFrontOriginAccessIdentities(sess *session.Session) ([]Resource, er
 	svc := cloudfront.New(sess)
 	resources := []Resource{}
 
-	for {
-		resp, err := svc.ListCloudFrontOriginAccessIdentities(nil)
-		if err != nil {
-			return nil, err
-		}
-
-		for _, item := range resp.CloudFrontOriginAccessIdentityList.Items {
-			resources = append(resources, &CloudFrontOriginAccessIdentity{
-				svc: svc,
-				ID:  item.Id,
-			})
-		}
-		return resources, nil
+	resp, err := svc.ListCloudFrontOriginAccessIdentities(nil)
+	if err != nil {
+		return nil, err
 	}
+
+	for _, item := range resp.CloudFrontOriginAccessIdentityList.Items {
+		resources = append(resources, &CloudFrontOriginAccessIdentity{
+			svc: svc,
+			ID:  item.Id,
+		})
+	}
+	return resources, nil
 }
 
 func (f *CloudFrontOriginAccessIdentity) Remove() error {
