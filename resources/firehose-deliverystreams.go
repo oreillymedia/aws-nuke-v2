@@ -3,6 +3,8 @@ package resources
 import (
 	"context"
 
+	"github.com/gotidy/ptr"
+
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/service/firehose"
 	"github.com/rebuy-de/aws-nuke/v2/pkg/types"
