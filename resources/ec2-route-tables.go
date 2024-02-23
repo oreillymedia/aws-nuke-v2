@@ -45,9 +45,9 @@ func (l *EC2RouteTableLister) List(_ context.Context, o interface{}) ([]resource
 		return nil, err
 	}
 
-	defVpcId := ""
+	defVpcID := ""
 	if defVpc := DefaultVpc(svc); defVpc != nil {
-		defVpcId = ptr.ToString(defVpc.VpcId)
+		defVpcID = ptr.ToString(defVpc.VpcId)
 	}
 
 	resources := make([]resource.Resource, 0)

@@ -46,9 +46,9 @@ func (l *EC2DHCPOptionLister) List(_ context.Context, o interface{}) ([]resource
 		return nil, err
 	}
 
-	defVpcDhcpOptsId := ""
+	defVpcDhcpOptsID := ""
 	if defVpc := DefaultVpc(svc); defVpc != nil {
-		defVpcDhcpOptsId = ptr.ToString(defVpc.DhcpOptionsId)
+		defVpcDhcpOptsID = ptr.ToString(defVpc.DhcpOptionsId)
 	}
 
 	resources := make([]resource.Resource, 0)
