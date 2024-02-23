@@ -83,7 +83,7 @@ func ListIAMUserAccessKeys(sess *session.Session) ([]Resource, error) {
 func (e *IAMUserAccessKey) Remove() error {
 	_, err := e.svc.DeleteAccessKey(
 		&iam.DeleteAccessKeyInput{
-			AccessKeyId: &e.accessKeyId,
+			AccessKeyId: &e.accessKeyID,
 			UserName:    &e.userName,
 		})
 	if err != nil {
@@ -96,7 +96,7 @@ func (e *IAMUserAccessKey) Remove() error {
 func (e *IAMUserAccessKey) Properties() types.Properties {
 	properties := types.NewProperties()
 	properties.Set("UserName", e.userName)
-	properties.Set("AccessKeyID", e.accessKeyId)
+	properties.Set("AccessKeyID", e.accessKeyID)
 
 	if e.createDate != nil {
 		properties.Set("CreateDate", e.createDate.Format(time.RFC3339))
@@ -110,7 +110,7 @@ func (e *IAMUserAccessKey) Properties() types.Properties {
 }
 
 func (e *IAMUserAccessKey) String() string {
-	return fmt.Sprintf("%s -> %s", e.userName, e.accessKeyId)
+	return fmt.Sprintf("%s -> %s", e.userName, e.accessKeyID)
 }
 
 // --------------
@@ -144,7 +144,7 @@ func (l *IAMUserAccessKeyLister) List(_ context.Context, o interface{}) ([]resou
 		for _, meta := range resp.AccessKeyMetadata {
 			resources = append(resources, &IAMUserAccessKey{
 				svc:         svc,
-				accessKeyId: *meta.AccessKeyId,
+				accessKeyID: *meta.AccessKeyId,
 				userName:    *meta.UserName,
 				status:      *meta.Status,
 				userTags:    userTags.Tags,

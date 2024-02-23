@@ -32,7 +32,7 @@ func init() {
 type IAMPolicy struct {
 	svc      iamiface.IAMAPI
 	name     string
-	policyId string
+	policyID string
 	arn      string
 	path     string
 	tags     []*iam.Tag
@@ -45,6 +45,7 @@ func (e *IAMPolicy) Remove(_ context.Context) error {
 	if err != nil {
 		return err
 	}
+
 	for _, version := range resp.Versions {
 		if !*version.IsDefaultVersion {
 			_, err = e.svc.DeletePolicyVersion(&iam.DeletePolicyVersionInput{
@@ -54,9 +55,9 @@ func (e *IAMPolicy) Remove(_ context.Context) error {
 			if err != nil {
 				return err
 			}
-
 		}
 	}
+
 	_, err = e.svc.DeletePolicy(&iam.DeletePolicyInput{
 		PolicyArn: &e.arn,
 	})
@@ -73,7 +74,7 @@ func (e *IAMPolicy) Properties() types.Properties {
 	properties.Set("Name", e.name)
 	properties.Set("ARN", e.arn)
 	properties.Set("Path", e.path)
-	properties.Set("PolicyID", e.policyId)
+	properties.Set("PolicyID", e.policyID)
 	for _, tag := range e.tags {
 		properties.SetTag(tag.Key, tag.Value)
 	}
@@ -130,7 +131,7 @@ func (l *IAMPolicyLister) List(_ context.Context, o interface{}) ([]resource.Res
 			name:     *out.PolicyName,
 			path:     *out.Path,
 			arn:      *out.Arn,
-			policyId: *out.PolicyId,
+			policyID: *out.PolicyId,
 			tags:     out.Tags,
 		})
 	}
