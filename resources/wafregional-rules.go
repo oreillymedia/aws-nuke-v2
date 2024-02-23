@@ -75,7 +75,6 @@ type WAFRegionalRule struct {
 }
 
 func (f *WAFRegionalRule) Remove(_ context.Context) error {
-
 	tokenOutput, err := f.svc.GetChangeToken(&waf.GetChangeTokenInput{})
 	if err != nil {
 		return err

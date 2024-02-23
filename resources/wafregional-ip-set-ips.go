@@ -43,7 +43,6 @@ func (l *WAFRegionalIPSetIPLister) List(_ context.Context, o interface{}) ([]res
 		}
 
 		for _, set := range resp.IPSets {
-
 			details, err := svc.GetIPSet(&waf.GetIPSetInput{
 				IPSetId: set.IPSetId,
 			})

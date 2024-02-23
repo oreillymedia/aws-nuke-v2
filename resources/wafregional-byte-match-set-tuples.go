@@ -43,7 +43,6 @@ func (l *WAFRegionalByteMatchSetIPLister) List(_ context.Context, o interface{})
 		}
 
 		for _, set := range resp.ByteMatchSets {
-
 			details, err := svc.GetByteMatchSet(&waf.GetByteMatchSetInput{
 				ByteMatchSetId: set.ByteMatchSetId,
 			})
