@@ -95,7 +95,9 @@ func (e *EC2RouteTable) Properties() types.Properties {
 	properties := types.NewProperties()
 
 	properties.Set("DefaultVPC", e.defaultVPC)
-	properties.Set("vpcID", e.routeTable.VpcId)
+	properties.Set("OwnerID", e.ownerID)
+	properties.SetWithPrefix("vpc", "vpcID", e.vpc.VpcId)
+	properties.SetWithPrefix("vpc", "ID", e.vpc.VpcId)
 
 	for _, tagValue := range e.routeTable.Tags {
 		properties.SetTag(tagValue.Key, tagValue.Value)

@@ -86,8 +86,10 @@ func (l *EC2InternetGatewayAttachmentLister) List(_ context.Context, o interface
 type EC2InternetGatewayAttachment struct {
 	svc        *ec2.EC2
 	vpcID      *string
+	vpcOwnerID *string
 	vpcTags    []*ec2.Tag
 	igwID      *string
+	igwOwnerID *string
 	igwTags    []*ec2.Tag
 	defaultVPC bool
 }
@@ -108,6 +110,11 @@ func (e *EC2InternetGatewayAttachment) Remove(_ context.Context) error {
 
 func (e *EC2InternetGatewayAttachment) Properties() types.Properties {
 	properties := types.NewProperties()
+
+	properties.Set("DefaultVPC", e.defaultVPC)
+	properties.SetWithPrefix("vpc", "OwnerID", e.vpcOwnerID)
+	properties.SetWithPrefix("igw", "OwnerID", e.igwOwnerID)
+
 	for _, tagValue := range e.igwTags {
 		properties.SetTagWithPrefix("igw", tagValue.Key, tagValue.Value)
 	}

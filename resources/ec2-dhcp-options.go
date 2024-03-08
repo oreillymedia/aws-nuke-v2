@@ -70,6 +70,7 @@ type EC2DHCPOption struct {
 	id         *string
 	tags       []*ec2.Tag
 	defaultVPC bool
+	ownerID    *string
 }
 
 func (e *EC2DHCPOption) Remove(_ context.Context) error {
@@ -87,6 +88,10 @@ func (e *EC2DHCPOption) Remove(_ context.Context) error {
 
 func (e *EC2DHCPOption) Properties() types.Properties {
 	properties := types.NewProperties()
+
+	properties.Set("DefaultVPC", e.defaultVPC)
+	properties.Set("OwnerID", e.ownerID)
+
 	for _, tagValue := range e.tags {
 		properties.SetTag(tagValue.Key, tagValue.Value)
 	}
