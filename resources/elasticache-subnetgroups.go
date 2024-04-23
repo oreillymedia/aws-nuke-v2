@@ -2,16 +2,17 @@ package resources
 
 import (
 	"fmt"
-	"github.com/aws/aws-sdk-go/service/elasticache/elasticacheiface"
-	"github.com/ekristen/libnuke/pkg/types"
-	"github.com/sirupsen/logrus"
 	"strings"
+
+	"github.com/sirupsen/logrus"
 
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/service/elasticache"
+	"github.com/aws/aws-sdk-go/service/elasticache/elasticacheiface"
 
 	"github.com/ekristen/libnuke/pkg/registry"
 	"github.com/ekristen/libnuke/pkg/resource"
+	"github.com/ekristen/libnuke/pkg/types"
 
 	"github.com/ekristen/aws-nuke/pkg/nuke"
 )
