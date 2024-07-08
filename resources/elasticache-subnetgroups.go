@@ -50,7 +50,7 @@ func (l *ElasticacheSubnetGroupLister) List(_ context.Context, o interface{}) ([
 	var resources []resource.Resource
 	for _, subnetGroup := range resp.CacheSubnetGroups {
 		tags, err := svc.ListTagsForResource(&elasticache.ListTagsForResourceInput{
-			ResourceName: subnetGroup.CacheSubnetGroupName,
+			ResourceName: subnetGroup.ARN,
 		})
 		if err != nil {
 			logrus.WithError(err).Error("unable to retrieve tags")
