@@ -35,6 +35,7 @@ type IAMUserAccessKey struct {
 	createDate  *time.Time
 	userName    string
 	status      string
+	createDate  *time.Time
 	userTags    []*iam.Tag
 }
 
@@ -97,6 +98,7 @@ func (e *IAMUserAccessKey) Properties() types.Properties {
 	properties := types.NewProperties()
 	properties.Set("UserName", e.userName)
 	properties.Set("AccessKeyID", e.accessKeyID)
+	properties.Set("CreateDate", e.createDate.Format(time.RFC3339))
 
 	if e.createDate != nil {
 		properties.Set("CreateDate", e.createDate.Format(time.RFC3339))
@@ -147,6 +149,7 @@ func (l *IAMUserAccessKeyLister) List(_ context.Context, o interface{}) ([]resou
 				accessKeyID: *meta.AccessKeyId,
 				userName:    *meta.UserName,
 				status:      *meta.Status,
+				createDate:  meta.CreateDate,
 				userTags:    userTags.Tags,
 			})
 		}
