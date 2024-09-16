@@ -1,6 +1,9 @@
 package resources
 
 import (
+	"fmt"
+	"strings"
+
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/aws/aws-sdk-go/service/bedrockagent"
@@ -80,6 +83,13 @@ func ListBedrockAgentIds(svc *bedrockagent.BedrockAgent) ([]string, error) {
 	}
 
 	return agentIds, nil
+}
+
+func (f *BedrockAgentAlias) Filter() error {
+	if strings.HasPrefix(*f.AgentAliasName, "AgentTestAlias") {
+		return fmt.Errorf("cannot delete AWS managed Agent Alias")
+	}
+	return nil
 }
 
 func (f *BedrockAgentAlias) Remove() error {

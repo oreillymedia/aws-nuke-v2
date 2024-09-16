@@ -1,6 +1,9 @@
 package resources
 
 import (
+	"fmt"
+	"strings"
+
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/aws/aws-sdk-go/service/bedrockagent"
@@ -80,6 +83,13 @@ func ListBedrockFlowIds(svc *bedrockagent.BedrockAgent) ([]string, error) {
 	}
 
 	return flowIds, nil
+}
+
+func (f *BedrockFlowAlias) Filter() error {
+	if strings.HasPrefix(*f.FlowAliasName, "TSTALIASID") {
+		return fmt.Errorf("cannot delete AWS managed Flow Alias")
+	}
+	return nil
 }
 
 func (f *BedrockFlowAlias) Remove() error {
