@@ -7,6 +7,7 @@ import (
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/aws/aws-sdk-go/service/bedrockagent"
+	"github.com/rebuy-de/aws-nuke/v2/pkg/types"
 )
 
 type BedrockFlowAlias struct {
@@ -98,6 +99,15 @@ func (f *BedrockFlowAlias) Remove() error {
 		FlowIdentifier:  f.FlowId,
 	})
 	return err
+}
+
+func (f *BedrockFlowAlias) Properties() types.Properties {
+	properties := types.NewProperties().
+		Set("FlowId", f.FlowId).
+		Set("FlowAliasId", f.FlowAliasId).
+		Set("FlowAliasName", f.FlowAliasName)
+
+	return properties
 }
 
 func (f *BedrockFlowAlias) String() string {

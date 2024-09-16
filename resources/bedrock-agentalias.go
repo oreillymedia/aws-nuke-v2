@@ -4,6 +4,7 @@ import (
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/aws/aws-sdk-go/service/bedrockagent"
+	"github.com/rebuy-de/aws-nuke/v2/pkg/types"
 )
 
 type BedrockAgentAlias struct {
@@ -88,6 +89,15 @@ func (f *BedrockAgentAlias) Remove() error {
 		AgentId:      f.AgentId,
 	})
 	return err
+}
+
+func (f *BedrockAgentAlias) Properties() types.Properties {
+	properties := types.NewProperties().
+		Set("AgentId", f.AgentId).
+		Set("AgentAliasId", f.AgentAliasId).
+		Set("AgentAliasName", f.AgentAliasName)
+
+	return properties
 }
 
 func (f *BedrockAgentAlias) String() string {
