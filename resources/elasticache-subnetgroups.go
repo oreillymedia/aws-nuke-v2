@@ -2,9 +2,14 @@ package resources
 
 import (
 	"context"
+	"fmt"
+	"strings"
+
+	"github.com/sirupsen/logrus"
 
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/service/elasticache"
+	"github.com/aws/aws-sdk-go/service/elasticache/elasticacheiface"
 
 	"github.com/ekristen/libnuke/pkg/registry"
 	"github.com/ekristen/libnuke/pkg/resource"
@@ -13,65 +18,87 @@ import (
 	"github.com/ekristen/aws-nuke/v3/pkg/nuke"
 )
 
-type ElasticacheUserGroup struct {
-	svc     *elasticache.ElastiCache
-	groupID *string
-}
-
-const ElasticacheUserGroupResource = "ElasticacheUserGroup"
+const ElasticacheSubnetGroupResource = "ElasticacheSubnetGroup"
 
 func init() {
 	registry.Register(&registry.Registration{
-		Name:   ElasticacheUserGroupResource,
+		Name:   ElasticacheSubnetGroupResource,
 		Scope:  nuke.Account,
-		Lister: &ElasticacheUserGroupLister{},
+		Lister: &ElasticacheSubnetGroupLister{},
 	})
 }
 
-type ElasticacheUserGroupLister struct{}
+type ElasticacheSubnetGroupLister struct {
+	mockSvc elasticacheiface.ElastiCacheAPI
+}
 
-func (l *ElasticacheUserGroupLister) List(_ context.Context, o interface{}) ([]resource.Resource, error) {
+func (l *ElasticacheSubnetGroupLister) List(_ context.Context, o interface{}) ([]resource.Resource, error) {
 	opts := o.(*nuke.ListerOpts)
 
-	svc := elasticache.New(opts.Session)
-	resources := make([]resource.Resource, 0)
-	var nextToken *string
+	var svc elasticacheiface.ElastiCacheAPI
+	if l.mockSvc != nil {
+		svc = l.mockSvc
+	} else {
+		svc = elasticache.New(opts.Session)
+	}
 
-	for {
-		params := &elasticache.DescribeUserGroupsInput{
-			MaxRecords: aws.Int64(100),
-			Marker:     nextToken,
-		}
-		resp, err := svc.DescribeUserGroups(params)
+	params := &elasticache.DescribeCacheSubnetGroupsInput{MaxRecords: aws.Int64(100)}
+	resp, err := svc.DescribeCacheSubnetGroups(params)
+	if err != nil {
+		return nil, err
+	}
+
+	var resources []resource.Resource
+	for _, subnetGroup := range resp.CacheSubnetGroups {
+		tags, err := svc.ListTagsForResource(&elasticache.ListTagsForResourceInput{
+			ResourceName: subnetGroup.ARN,
+		})
 		if err != nil {
-			return nil, err
+			logrus.WithError(err).Error("unable to retrieve tags")
+			continue
 		}
 
-		for _, userGroup := range resp.UserGroups {
-			resources = append(resources, &ElasticacheUserGroup{
-				svc:     svc,
-				groupID: userGroup.UserGroupId,
-			})
-		}
-
-		// Check if there are more results
-		if resp.Marker == nil {
-			break // No more results, exit the loop
-		}
-
-		// Set the nextToken for the next iteration
-		nextToken = resp.Marker
+		resources = append(resources, &ElasticacheSubnetGroup{
+			svc:  svc,
+			name: subnetGroup.CacheSubnetGroupName,
+			Tags: tags.TagList,
+		})
 	}
 
 	return resources, nil
 }
 
-func (i *ElasticacheUserGroup) Remove(_ context.Context) error {
-	params := &elasticache.DeleteUserGroupInput{
-		UserGroupId: i.groupID,
+type ElasticacheSubnetGroup struct {
+	svc  elasticacheiface.ElastiCacheAPI
+	name *string
+	Tags []*elasticache.Tag
+}
+
+func (i *ElasticacheSubnetGroup) Filter() error {
+	if strings.HasPrefix(*i.name, "default") {
+		return fmt.Errorf("cannot delete default subnet group")
+	}
+	return nil
+}
+
+func (i *ElasticacheSubnetGroup) Properties() types.Properties {
+	properties := types.NewProperties()
+
+	properties.Set("Name", i.name)
+
+	for _, tag := range i.Tags {
+		properties.SetTag(tag.Key, tag.Value)
 	}
 
-	_, err := i.svc.DeleteUserGroup(params)
+	return properties
+}
+
+func (i *ElasticacheSubnetGroup) Remove(_ context.Context) error {
+	params := &elasticache.DeleteCacheSubnetGroupInput{
+		CacheSubnetGroupName: i.name,
+	}
+
+	_, err := i.svc.DeleteCacheSubnetGroup(params)
 	if err != nil {
 		return err
 	}
@@ -79,12 +106,6 @@ func (i *ElasticacheUserGroup) Remove(_ context.Context) error {
 	return nil
 }
 
-func (i *ElasticacheUserGroup) Properties() types.Properties {
-	properties := types.NewProperties()
-	properties.Set("ID", i.groupID)
-	return properties
-}
-
-func (i *ElasticacheUserGroup) String() string {
-	return *i.groupID
+func (i *ElasticacheSubnetGroup) String() string {
+	return *i.name
 }
