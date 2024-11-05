@@ -59,7 +59,14 @@ func (l *RDSDBClusterLister) List(_ context.Context, o interface{}) ([]resource.
 	return resources, nil
 }
 
-func (i *RDSDBCluster) Remove() error {
+type RDSDBCluster struct {
+	svc                *rds.RDS
+	id                 string
+	deletionProtection bool
+	tags               []*rds.Tag
+}
+
+func (i *RDSDBCluster) Remove(_ context.Context) error {
 	if i.deletionProtection {
 		modifyParams := &rds.ModifyDBClusterInput{
 			DBClusterIdentifier: &i.id,

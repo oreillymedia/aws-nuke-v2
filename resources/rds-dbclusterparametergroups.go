@@ -41,7 +41,7 @@ func (l *RDSDBClusterParameterGroupLister) List(_ context.Context, o interface{}
 	var resources []resource.Resource
 	for _, group := range resp.DBClusterParameterGroups {
 		tags, err := svc.ListTagsForResource(&rds.ListTagsForResourceInput{
-			ResourceName: parametergroup.DBClusterParameterGroupArn,
+			ResourceName: group.DBClusterParameterGroupArn,
 		})
 		if err != nil {
 			continue

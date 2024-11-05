@@ -1,10 +1,17 @@
 package resources
 
 import (
+	"context"
 	"fmt"
+
 	"github.com/aws/aws-sdk-go/aws"
-	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/aws/aws-sdk-go/service/dax"
+
+	"github.com/ekristen/libnuke/pkg/registry"
+	"github.com/ekristen/libnuke/pkg/resource"
+	"github.com/ekristen/libnuke/pkg/types"
+
+	"github.com/ekristen/aws-nuke/v3/pkg/nuke"
 )
 
 const DAXSubnetGroupResource = "DAXSubnetGroup"

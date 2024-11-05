@@ -31,57 +31,14 @@ func init() {
 
 type IAMUserAccessKey struct {
 	svc         iamiface.IAMAPI
-	accessKeyId string
-	createDate  *time.Time
+	accessKeyID string
 	userName    string
 	status      string
 	createDate  *time.Time
 	userTags    []*iam.Tag
 }
 
-func init() {
-	register("IAMUserAccessKey", ListIAMUserAccessKeys)
-}
-
-func ListIAMUserAccessKeys(sess *session.Session) ([]Resource, error) {
-	svc := iam.New(sess)
-
-	resp, err := svc.ListUsers(nil)
-	if err != nil {
-		return nil, err
-	}
-
-	resources := make([]Resource, 0)
-	for _, role := range resp.Users {
-		resp, err := svc.ListAccessKeys(
-			&iam.ListAccessKeysInput{
-				UserName: role.UserName,
-			})
-		if err != nil {
-			return nil, err
-		}
-
-		userTags, err := svc.ListUserTags(&iam.ListUserTagsInput{UserName: role.UserName})
-		if err != nil {
-			return nil, err
-		}
-
-		for _, meta := range resp.AccessKeyMetadata {
-			resources = append(resources, &IAMUserAccessKey{
-				svc:         svc,
-				accessKeyId: *meta.AccessKeyId,
-				createDate:  meta.CreateDate,
-				userName:    *meta.UserName,
-				status:      *meta.Status,
-				userTags:    userTags.Tags,
-			})
-		}
-	}
-
-	return resources, nil
-}
-
-func (e *IAMUserAccessKey) Remove() error {
+func (e *IAMUserAccessKey) Remove(_ context.Context) error {
 	_, err := e.svc.DeleteAccessKey(
 		&iam.DeleteAccessKeyInput{
 			AccessKeyId: &e.accessKeyID,
@@ -99,10 +56,6 @@ func (e *IAMUserAccessKey) Properties() types.Properties {
 	properties.Set("UserName", e.userName)
 	properties.Set("AccessKeyID", e.accessKeyID)
 	properties.Set("CreateDate", e.createDate.Format(time.RFC3339))
-
-	if e.createDate != nil {
-		properties.Set("CreateDate", e.createDate.Format(time.RFC3339))
-	}
 
 	for _, tag := range e.userTags {
 		properties.SetTag(tag.Key, tag.Value)

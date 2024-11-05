@@ -1,9 +1,11 @@
 package resources
 
 import (
+	"context"
 	"fmt"
 
-	"github.com/aws/aws-sdk-go/aws/session"
+	"github.com/gotidy/ptr"
+
 	"github.com/aws/aws-sdk-go/service/ec2"
 
 	"github.com/ekristen/libnuke/pkg/registry"
@@ -24,13 +26,6 @@ func init() {
 			EC2SubnetResource,
 		},
 	})
-}
-
-type EC2RouteTable struct {
-	svc        *ec2.EC2
-	routeTable *ec2.RouteTable
-	defaultVPC bool
-	ownerID    *string
 }
 
 type EC2RouteTableLister struct{}
@@ -60,7 +55,8 @@ func (l *EC2RouteTableLister) List(_ context.Context, o interface{}) ([]resource
 		resources = append(resources, &EC2RouteTable{
 			svc:        svc,
 			routeTable: out,
-			defaultVPC: defVpcId == *out.VpcId,
+			defaultVPC: defVpcID == ptr.ToString(out.VpcId),
+			vpc:        vpc,
 			ownerID:    out.OwnerId,
 		})
 	}
@@ -68,17 +64,25 @@ func (l *EC2RouteTableLister) List(_ context.Context, o interface{}) ([]resource
 	return resources, nil
 }
 
-func (i *EC2RouteTable) Filter() error {
+type EC2RouteTable struct {
+	svc        *ec2.EC2
+	routeTable *ec2.RouteTable
+	defaultVPC bool
+	vpc        *ec2.Vpc
+	ownerID    *string
+}
 
-	for _, association := range i.routeTable.Associations {
+func (e *EC2RouteTable) Filter() error {
+	for _, association := range e.routeTable.Associations {
 		if *association.Main {
-			return fmt.Errorf("Main RouteTables cannot be deleted")
+			return fmt.Errorf("main route tables cannot be deleted")
 		}
 	}
+
 	return nil
 }
 
-func (e *EC2RouteTable) Remove() error {
+func (e *EC2RouteTable) Remove(_ context.Context) error {
 	params := &ec2.DeleteRouteTableInput{
 		RouteTableId: e.routeTable.RouteTableId,
 	}
@@ -102,8 +106,11 @@ func (e *EC2RouteTable) Properties() types.Properties {
 	for _, tagValue := range e.routeTable.Tags {
 		properties.SetTag(tagValue.Key, tagValue.Value)
 	}
-	properties.Set("DefaultVPC", e.defaultVPC)
-	properties.Set("OwnerID", e.ownerID)
+
+	for _, tagValue := range e.vpc.Tags {
+		properties.SetTagWithPrefix("vpc", tagValue.Key, tagValue.Value)
+	}
+
 	return properties
 }
 

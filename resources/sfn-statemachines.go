@@ -57,28 +57,10 @@ func (l *SFNStateMachineLister) List(_ context.Context, o interface{}) ([]resour
 	return resources, nil
 }
 
-func (f *SFNStateMachine) Remove() error {
-	params := &sfn.ListExecutionsInput{
-		StateMachineArn: f.ARN,
-	}
-
-	for {
-		executions, execError := f.svc.ListExecutions(params)
-		if execError != nil {
-			break
-		}
-		for _, execs := range executions.Executions {
-
-			f.svc.StopExecution(&sfn.StopExecutionInput{
-				ExecutionArn: execs.ExecutionArn,
-			})
-		}
-
-		if executions.NextToken == nil {
-			break
-		}
-		params.NextToken = executions.NextToken
-	}
+type SFNStateMachine struct {
+	svc *sfn.SFN
+	ARN *string
+}
 
 func (f *SFNStateMachine) Remove(_ context.Context) error {
 	_, err := f.svc.DeleteStateMachine(&sfn.DeleteStateMachineInput{

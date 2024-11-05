@@ -1,23 +1,34 @@
 package resources
 
 import (
-	"github.com/aws/aws-sdk-go/aws/session"
+	"context"
+
 	"github.com/aws/aws-sdk-go/service/cloudfront"
-	"github.com/rebuy-de/aws-nuke/v2/pkg/types"
+
+	"github.com/ekristen/libnuke/pkg/registry"
+	"github.com/ekristen/libnuke/pkg/resource"
+	"github.com/ekristen/libnuke/pkg/types"
+
+	"github.com/ekristen/aws-nuke/v3/pkg/nuke"
 )
 
-type CloudFrontOriginAccessIdentity struct {
-	svc *cloudfront.CloudFront
-	ID  *string
-}
+const CloudFrontOriginAccessIdentityResource = "CloudFrontOriginAccessIdentity"
 
 func init() {
-	register("CloudFrontOriginAccessIdentity", ListCloudFrontOriginAccessIdentities)
+	registry.Register(&registry.Registration{
+		Name:   CloudFrontOriginAccessIdentityResource,
+		Scope:  nuke.Account,
+		Lister: &CloudFrontOriginAccessIdentityLister{},
+	})
 }
 
-func ListCloudFrontOriginAccessIdentities(sess *session.Session) ([]Resource, error) {
-	svc := cloudfront.New(sess)
-	resources := []Resource{}
+type CloudFrontOriginAccessIdentityLister struct{}
+
+func (l *CloudFrontOriginAccessIdentityLister) List(_ context.Context, o interface{}) ([]resource.Resource, error) {
+	opts := o.(*nuke.ListerOpts)
+
+	svc := cloudfront.New(opts.Session)
+	resources := make([]resource.Resource, 0)
 
 	resp, err := svc.ListCloudFrontOriginAccessIdentities(nil)
 	if err != nil {
@@ -33,7 +44,12 @@ func ListCloudFrontOriginAccessIdentities(sess *session.Session) ([]Resource, er
 	return resources, nil
 }
 
-func (f *CloudFrontOriginAccessIdentity) Remove() error {
+type CloudFrontOriginAccessIdentity struct {
+	svc *cloudfront.CloudFront
+	ID  *string
+}
+
+func (f *CloudFrontOriginAccessIdentity) Remove(_ context.Context) error {
 	resp, err := f.svc.GetCloudFrontOriginAccessIdentity(&cloudfront.GetCloudFrontOriginAccessIdentityInput{
 		Id: f.ID,
 	})

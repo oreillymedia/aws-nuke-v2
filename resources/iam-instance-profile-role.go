@@ -103,7 +103,7 @@ func (e *IAMInstanceProfileRole) Remove(_ context.Context) error {
 }
 
 func (e *IAMInstanceProfileRole) String() string {
-	return fmt.Sprintf("%s -> %s", *e.profile.InstanceProfileName, *e.role.RoleName)
+	return fmt.Sprintf("%s -> %s", ptr.ToString(e.profile.InstanceProfileName), ptr.ToString(e.role.RoleName))
 }
 
 func (e *IAMInstanceProfileRole) Properties() types.Properties {

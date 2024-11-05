@@ -13,12 +13,7 @@ import (
 	"github.com/ekristen/aws-nuke/v3/pkg/nuke"
 )
 
-type CodeStarConnection struct {
-	svc            *codestarconnections.CodeStarConnections
-	connectionARN  *string
-	connectionName *string
-	providerType   *string
-}
+const CodeStarConnectionResource = "CodeStarConnection"
 
 func init() {
 	registry.Register(&registry.Registration{

@@ -1,14 +1,10 @@
 package resources
 
 import (
-	"fmt"
-	"strings"
-
-	"github.com/sirupsen/logrus"
+	"context"
 
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/service/elasticache"
-	"github.com/aws/aws-sdk-go/service/elasticache/elasticacheiface"
 
 	"github.com/ekristen/libnuke/pkg/registry"
 	"github.com/ekristen/libnuke/pkg/resource"
@@ -17,69 +13,65 @@ import (
 	"github.com/ekristen/aws-nuke/v3/pkg/nuke"
 )
 
-const ElasticacheSubnetGroupResource = "ElasticacheSubnetGroup"
+type ElasticacheUserGroup struct {
+	svc     *elasticache.ElastiCache
+	groupID *string
+}
+
+const ElasticacheUserGroupResource = "ElasticacheUserGroup"
 
 func init() {
 	registry.Register(&registry.Registration{
-		Name:   ElasticacheSubnetGroupResource,
+		Name:   ElasticacheUserGroupResource,
 		Scope:  nuke.Account,
-		Lister: &ElasticacheSubnetGroupLister{},
+		Lister: &ElasticacheUserGroupLister{},
 	})
 }
 
-type ElasticacheSubnetGroupLister struct {
-	mockSvc elasticacheiface.ElastiCacheAPI
-}
+type ElasticacheUserGroupLister struct{}
 
-func (l *ElasticacheSubnetGroupLister) List(_ context.Context, o interface{}) ([]resource.Resource, error) {
+func (l *ElasticacheUserGroupLister) List(_ context.Context, o interface{}) ([]resource.Resource, error) {
 	opts := o.(*nuke.ListerOpts)
 
-	var svc elasticacheiface.ElastiCacheAPI
-	if l.mockSvc != nil {
-		svc = l.mockSvc
-	} else {
-		svc = elasticache.New(opts.Session)
-	}
+	svc := elasticache.New(opts.Session)
+	resources := make([]resource.Resource, 0)
+	var nextToken *string
 
-	params := &elasticache.DescribeCacheSubnetGroupsInput{MaxRecords: aws.Int64(100)}
-	resp, err := svc.DescribeCacheSubnetGroups(params)
-	if err != nil {
-		return nil, err
-	}
-
-	var resources []resource.Resource
-	for _, subnetGroup := range resp.CacheSubnetGroups {
-		tags, err := svc.ListTagsForResource(&elasticache.ListTagsForResourceInput{
-			ResourceName: subnetGroup.ARN,
-		})
+	for {
+		params := &elasticache.DescribeUserGroupsInput{
+			MaxRecords: aws.Int64(100),
+			Marker:     nextToken,
+		}
+		resp, err := svc.DescribeUserGroups(params)
 		if err != nil {
-			logrus.WithError(err).Error("unable to retrieve tags")
-			continue
+			return nil, err
 		}
 
-		resources = append(resources, &ElasticacheSubnetGroup{
-			svc:  svc,
-			name: subnetGroup.CacheSubnetGroupName,
-			Tags: tags.TagList,
-		})
+		for _, userGroup := range resp.UserGroups {
+			resources = append(resources, &ElasticacheUserGroup{
+				svc:     svc,
+				groupID: userGroup.UserGroupId,
+			})
+		}
+
+		// Check if there are more results
+		if resp.Marker == nil {
+			break // No more results, exit the loop
+		}
+
+		// Set the nextToken for the next iteration
+		nextToken = resp.Marker
 	}
 
 	return resources, nil
 }
 
-func (i *ElasticacheSubnetGroup) Filter() error {
-	if strings.HasPrefix(*i.name, "default") {
-		return fmt.Errorf("Cannot delete default subnet group")
-	}
-	return nil
-}
-
-func (i *ElasticacheSubnetGroup) Remove() error {
-	params := &elasticache.DeleteCacheSubnetGroupInput{
-		CacheSubnetGroupName: i.name,
+func (i *ElasticacheUserGroup) Remove(_ context.Context) error {
+	params := &elasticache.DeleteUserGroupInput{
+		UserGroupId: i.groupID,
 	}
 
-	_, err := i.svc.DeleteCacheSubnetGroup(params)
+	_, err := i.svc.DeleteUserGroup(params)
 	if err != nil {
 		return err
 	}
@@ -87,6 +79,12 @@ func (i *ElasticacheSubnetGroup) Remove() error {
 	return nil
 }
 
-func (i *ElasticacheSubnetGroup) String() string {
-	return *i.name
+func (i *ElasticacheUserGroup) Properties() types.Properties {
+	properties := types.NewProperties()
+	properties.Set("ID", i.groupID)
+	return properties
+}
+
+func (i *ElasticacheUserGroup) String() string {
+	return *i.groupID
 }

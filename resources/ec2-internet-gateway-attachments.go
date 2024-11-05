@@ -16,16 +16,7 @@ import (
 	"github.com/ekristen/aws-nuke/v3/pkg/nuke"
 )
 
-type EC2InternetGatewayAttachment struct {
-	svc        *ec2.EC2
-	vpcId      *string
-	vpcOwnerID *string
-	vpcTags    []*ec2.Tag
-	igwId      *string
-	igwOwnerID *string
-	igwTags    []*ec2.Tag
-	defaultVPC bool
-}
+const EC2InternetGatewayAttachmentResource = "EC2InternetGatewayAttachment"
 
 func init() {
 	registry.Register(&registry.Registration{
@@ -69,10 +60,10 @@ func (l *EC2InternetGatewayAttachmentLister) List(_ context.Context, o interface
 		for _, igw := range resp.InternetGateways {
 			resources = append(resources, &EC2InternetGatewayAttachment{
 				svc:        svc,
-				vpcId:      vpc.VpcId,
+				vpcID:      vpc.VpcId,
 				vpcOwnerID: vpc.OwnerId,
 				vpcTags:    vpc.Tags,
-				igwId:      igw.InternetGatewayId,
+				igwID:      igw.InternetGatewayId,
 				igwOwnerID: igw.OwnerId,
 				igwTags:    igw.Tags,
 				defaultVPC: *vpc.IsDefault,
@@ -121,9 +112,7 @@ func (e *EC2InternetGatewayAttachment) Properties() types.Properties {
 	for _, tagValue := range e.vpcTags {
 		properties.SetTagWithPrefix("vpc", tagValue.Key, tagValue.Value)
 	}
-	properties.Set("DefaultVPC", e.defaultVPC)
-	properties.SetPropertyWithPrefix("vpc", "OwnerID", e.vpcOwnerID)
-	properties.SetPropertyWithPrefix("igw", "OwnerID", e.igwOwnerID)
+
 	return properties
 }
 

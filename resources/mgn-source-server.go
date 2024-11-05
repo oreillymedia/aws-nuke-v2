@@ -7,8 +7,12 @@ import (
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/aws/awserr"
 	"github.com/aws/aws-sdk-go/service/mgn"
-	"github.com/rebuy-de/aws-nuke/v2/pkg/types"
-	"github.com/sirupsen/logrus"
+
+	"github.com/ekristen/libnuke/pkg/registry"
+	"github.com/ekristen/libnuke/pkg/resource"
+	"github.com/ekristen/libnuke/pkg/types"
+
+	"github.com/ekristen/aws-nuke/v3/pkg/nuke"
 )
 
 const MGNSourceServerResource = "MGNSourceServer"
@@ -36,10 +40,12 @@ func (l *MGNSourceServerLister) List(_ context.Context, o interface{}) ([]resour
 	for {
 		output, err := svc.DescribeSourceServers(params)
 		if err != nil {
-			if IsAWSError(err, mgn.ErrCodeUninitializedAccountException) {
-				logrus.Info("MGNSourceServer: Account not initialized for Application Migration Service. Ignore if you haven't set it up.")
+			var awsErr awserr.Error
+			ok := errors.As(err, &awsErr)
+			if ok && awsErr.Code() == "UninitializedAccountException" {
 				return nil, nil
 			}
+
 			return nil, err
 		}
 

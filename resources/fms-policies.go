@@ -1,14 +1,16 @@
 package resources
 
 import (
-	"strings"
+	"context"
 
 	"github.com/aws/aws-sdk-go/aws"
-	"github.com/aws/aws-sdk-go/aws/awserr"
-	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/aws/aws-sdk-go/service/fms"
-	"github.com/rebuy-de/aws-nuke/v2/pkg/types"
-	"github.com/sirupsen/logrus"
+
+	"github.com/ekristen/libnuke/pkg/registry"
+	"github.com/ekristen/libnuke/pkg/resource"
+	"github.com/ekristen/libnuke/pkg/types"
+
+	"github.com/ekristen/aws-nuke/v3/pkg/nuke"
 )
 
 const FMSPolicyResource = "FMSPolicy"
@@ -36,12 +38,6 @@ func (l *FMSPolicyLister) List(_ context.Context, o interface{}) ([]resource.Res
 	for {
 		resp, err := svc.ListPolicies(params)
 		if err != nil {
-			if aerr, ok := err.(awserr.Error); ok {
-				if strings.Contains(aerr.Message(), "No default admin could be found") {
-					logrus.Infof("FMSPolicy: %s. Ignore if you haven't set it up.", aerr.Message())
-					return nil, nil
-				}
-			}
 			return nil, err
 		}
 

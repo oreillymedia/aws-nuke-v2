@@ -97,10 +97,14 @@ func (r *ConfigServiceConfigRule) Filter() error {
 	return nil
 }
 
-func (f *ConfigServiceConfigRule) Remove() error {
-	f.svc.DeleteRemediationConfiguration(&configservice.DeleteRemediationConfigurationInput{
-		ConfigRuleName: f.configRuleName,
-	})
+func (r *ConfigServiceConfigRule) Remove(_ context.Context) error {
+	if ptr.ToBool(r.HasRemediationConfig) {
+		if _, err := r.svc.DeleteRemediationConfiguration(&configservice.DeleteRemediationConfigurationInput{
+			ConfigRuleName: r.Name,
+		}); err != nil {
+			return err
+		}
+	}
 
 	_, err := r.svc.DeleteConfigRule(&configservice.DeleteConfigRuleInput{
 		ConfigRuleName: r.Name,

@@ -72,8 +72,8 @@ func (l *AWSBackupVaultAccessPolicyLister) List(_ context.Context, o interface{}
 	return resources, nil
 }
 
-func (b *BackupVaultAccessPolicy) Remove() error {
-	// Set a policy that allows deletion before removal.
+func (b *BackupVaultAccessPolicy) Remove(_ context.Context) error {
+	// Set the policy to a policy that allows deletion before removal.
 	//
 	// This is required to delete the policy for the automagically created vaults
 	// such as "aws/efs/automatic-backup-vault" from EFS automatic backups
@@ -102,31 +102,21 @@ func (b *BackupVaultAccessPolicy) Remove() error {
 	//     ]
 	// }
 	//
-	// Update the default policy to remove the Deny on Delete* actions
-	// and then delete the policy.
-	//
-	// Why not putting a policy that allows `backup:DeleteBackupVaultAccessPolicy` in the first place?
-	// Because that throws an error:
-	// ' The specified policy cannot be added to the vault due to cross-account sharing restrictions.
-	// Amend the policy or the vault's settings, then retry request'
-	//
+	// While deletion is Denied, you can update the policy with one that
+	// doesn't deny and then delete at will.
 	allowDeletionPolicy := `{
-		"Version": "2012-10-17",
-		"Statement": [
-			{
-				"Effect": "Deny",
-				"Principal": {
-					"AWS": "*"
-				},
-				"Action": [
-					"backup:StartCopyJob",
-					"backup:StartRestoreJob",
-					"backup:UpdateRecoveryPointLifecycle"
-				],
-				"Resource": "*"
-			}
-		]
-	}`
+    "Version": "2012-10-17",
+    "Statement": [
+        {
+            "Effect": "Allow",
+            "Principal": {
+                "AWS": "*"
+            },
+            "Action": "backup:DeleteBackupVaultAccessPolicy",
+            "Resource": "*"
+        }
+    ]
+}`
 	// Ignore error from if we can't put permissive backup vault policy in for some reason, that's OK.
 	_, _ = b.svc.PutBackupVaultAccessPolicy(&backup.PutBackupVaultAccessPolicyInput{
 		BackupVaultName: &b.backupVaultName,

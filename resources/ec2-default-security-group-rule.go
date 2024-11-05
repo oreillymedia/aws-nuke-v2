@@ -13,13 +13,7 @@ import (
 	"github.com/ekristen/aws-nuke/v3/pkg/nuke"
 )
 
-type EC2DefaultSecurityGroupRule struct {
-	svc      *ec2.EC2
-	id       *string
-	groupId  *string
-	isEgress *bool
-	tags     []*ec2.Tag
-}
+const EC2DefaultSecurityGroupRuleResource = "EC2DefaultSecurityGroupRule"
 
 func init() {
 	registry.Register(&registry.Registration{
@@ -77,7 +71,6 @@ func (l *EC2DefaultSecurityGroupRuleLister) List(_ context.Context, o interface{
 					id:       rule.SecurityGroupRuleId,
 					groupID:  rule.GroupId,
 					isEgress: rule.IsEgress,
-					tags:     rule.Tags,
 				})
 			}
 			return !lastPage
@@ -126,10 +119,8 @@ func (r *EC2DefaultSecurityGroupRule) Remove(_ context.Context) error {
 
 func (r *EC2DefaultSecurityGroupRule) Properties() types.Properties {
 	properties := types.NewProperties()
-	for _, tagValue := range r.tags {
-		properties.SetTag(tagValue.Key, tagValue.Value)
-	}
-	properties.Set("SecurityGroupId", r.groupId)
+	properties.Set("SecurityGroupId", r.groupID)
+	properties.Set("DefaultVPC", true)
 	return properties
 }
 

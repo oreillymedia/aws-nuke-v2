@@ -14,13 +14,7 @@ import (
 	"github.com/ekristen/aws-nuke/v3/pkg/nuke"
 )
 
-type EC2DHCPOption struct {
-	svc        *ec2.EC2
-	id         *string
-	tags       []*ec2.Tag
-	defaultVPC bool
-	ownerID    *string
-}
+const EC2DHCPOptionResource = "EC2DHCPOption"
 
 func init() {
 	registry.Register(&registry.Registration{
@@ -57,7 +51,7 @@ func (l *EC2DHCPOptionLister) List(_ context.Context, o interface{}) ([]resource
 			svc:        svc,
 			id:         out.DhcpOptionsId,
 			tags:       out.Tags,
-			defaultVPC: defVpcDhcpOptsId == *out.DhcpOptionsId,
+			defaultVPC: defVpcDhcpOptsID == ptr.ToString(out.DhcpOptionsId),
 			ownerID:    out.OwnerId,
 		})
 	}
@@ -95,8 +89,7 @@ func (e *EC2DHCPOption) Properties() types.Properties {
 	for _, tagValue := range e.tags {
 		properties.SetTag(tagValue.Key, tagValue.Value)
 	}
-	properties.Set("DefaultVPC", e.defaultVPC)
-	properties.Set("OwnerID", e.ownerID)
+
 	return properties
 }
 

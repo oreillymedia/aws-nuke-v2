@@ -52,11 +52,16 @@ func init() {
 	registerCloudControl("AWS::NetworkFirewall::RuleGroup")
 }
 
-const CloudControlAPiMaxRetries = 5
-
-func NewListCloudControlResource(typeName string) func(*session.Session) ([]Resource, error) {
-	return func(sess *session.Session) ([]Resource, error) {
-		svc := cloudcontrolapi.New(sess, &aws.Config{MaxRetries: aws.Int(CloudControlAPiMaxRetries)})
+func registerCloudControl(typeName string) {
+	registry.Register(&registry.Registration{
+		Name:  typeName,
+		Scope: nuke.Account,
+		Lister: &CloudControlResourceLister{
+			TypeName: typeName,
+		},
+		AlternativeResource: typeName,
+	})
+}
 
 type CloudControlResourceLister struct {
 	TypeName string

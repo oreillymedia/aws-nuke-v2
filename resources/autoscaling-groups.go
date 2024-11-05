@@ -1,7 +1,7 @@
 package resources
 
 import (
-	"time"
+	"context"
 
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/service/autoscaling"
@@ -43,6 +43,7 @@ func (l *AutoScalingGroupLister) List(_ context.Context, o interface{}) ([]resou
 			}
 			return !lastPage
 		})
+
 	if err != nil {
 		return nil, err
 	}
@@ -80,7 +81,7 @@ func (asg *AutoScalingGroup) Properties() types.Properties {
 		properties.SetTag(tag.Key, tag.Value)
 	}
 
-	properties.Set("CreatedTime", asg.group.CreatedTime.Format(time.RFC3339))
+	properties.Set("CreatedTime", asg.group.CreatedTime)
 	properties.Set("Name", asg.group.AutoScalingGroupName)
 
 	return properties
