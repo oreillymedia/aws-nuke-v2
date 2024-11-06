@@ -38,6 +38,12 @@ func (l *FMSPolicyLister) List(_ context.Context, o interface{}) ([]resource.Res
 	for {
 		resp, err := svc.ListPolicies(params)
 		if err != nil {
+			if aerr, ok := err.(awserr.Error); ok {
+				if strings.Contains(aerr.Message(), "No default admin could be found") {
+					logrus.Infof("FMSPolicy: %s. Ignore if you haven't set it up.", aerr.Message())
+					return nil, nil
+				}
+			}
 			return nil, err
 		}
 

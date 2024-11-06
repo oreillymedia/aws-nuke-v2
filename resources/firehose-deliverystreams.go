@@ -44,10 +44,31 @@ func (l *FirehoseDeliveryStreamLister) List(_ context.Context, o interface{}) ([
 		}
 
 		for _, deliveryStreamName := range output.DeliveryStreamNames {
+			tagParams := &firehose.ListTagsForDeliveryStreamInput{
+				DeliveryStreamName: deliveryStreamName,
+				Limit:              aws.Int64(50),
+			}
+
+			for {
+				tagResp, tagErr := svc.ListTagsForDeliveryStream(tagParams)
+				if tagErr != nil {
+					return nil, tagErr
+				}
+
+				tags = append(tags, tagResp.Tags...)
+				if !*tagResp.HasMoreTags {
+					break
+				}
+
+				tagParams.ExclusiveStartTagKey = tagResp.Tags[len(tagResp.Tags)-1].Key
+			}
+
 			resources = append(resources, &FirehoseDeliveryStream{
 				svc:                svc,
 				deliveryStreamName: deliveryStreamName,
+				tags:               tags,
 			})
+
 			lastDeliveryStreamName = deliveryStreamName
 		}
 
@@ -76,4 +97,14 @@ func (f *FirehoseDeliveryStream) Remove(_ context.Context) error {
 
 func (f *FirehoseDeliveryStream) String() string {
 	return *f.deliveryStreamName
+}
+
+func (f *FirehoseDeliveryStream) Properties() types.Properties {
+	properties := types.NewProperties()
+	for _, tag := range f.tags {
+		properties.SetTag(tag.Key, tag.Value)
+	}
+
+	properties.Set("Name", f.deliveryStreamName)
+	return properties
 }

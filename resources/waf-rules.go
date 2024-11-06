@@ -42,9 +42,12 @@ func (l *WAFRuleLister) List(_ context.Context, o interface{}) ([]resource.Resou
 		}
 
 		for _, rule := range resp.Rules {
-			ruleResp, _ := svc.GetRule(&waf.GetRuleInput{
+			ruleResp, err := svc.GetRule(&waf.GetRuleInput{
 				RuleId: rule.RuleId,
 			})
+			if err != nil {
+				return nil, err
+			}
 			resources = append(resources, &WAFRule{
 				svc:  svc,
 				ID:   rule.RuleId,

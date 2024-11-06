@@ -40,8 +40,9 @@ func (l *ElasticacheReplicationGroupLister) List(_ context.Context, o interface{
 
 		for _, replicationGroup := range resp.ReplicationGroups {
 			resources = append(resources, &ElasticacheReplicationGroup{
-				svc:     svc,
-				groupID: replicationGroup.ReplicationGroupId,
+				svc:        svc,
+				groupID:    replicationGroup.ReplicationGroupId,
+				createTime: replicationGroup.ReplicationGroupCreateTime,
 			})
 		}
 

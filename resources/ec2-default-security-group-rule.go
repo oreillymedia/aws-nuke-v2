@@ -71,6 +71,7 @@ func (l *EC2DefaultSecurityGroupRuleLister) List(_ context.Context, o interface{
 					id:       rule.SecurityGroupRuleId,
 					groupID:  rule.GroupId,
 					isEgress: rule.IsEgress,
+					tags:     rule.Tags,
 				})
 			}
 			return !lastPage
