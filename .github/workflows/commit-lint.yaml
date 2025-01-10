@@ -13,7 +13,7 @@ permissions:
 
 jobs:
   commit-lint:
-    if: github.repository == 'ekristen/aws-nuke'
+    if: ${{ github.repository == 'ekristen/aws-nuke' }}
     name: commit-lint
     runs-on: ubuntu-latest
     steps:
