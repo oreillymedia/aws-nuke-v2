@@ -17,6 +17,6 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-        if: ${{ github.repository == 'ekristen/aws-nuke' }}
+        if: github.repository == 'ekristen/aws-nuke'
       - uses: wagoid/commitlint-github-action@v6
-        if: ${{ github.repository == 'ekristen/aws-nuke' }}
+        if: github.repository == 'ekristen/aws-nuke'
