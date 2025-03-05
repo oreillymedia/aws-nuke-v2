@@ -1,9 +1,9 @@
-# syntax=docker/dockerfile:1.12-labs
-FROM alpine:3.21.0 as base
+# syntax=docker/dockerfile:1.13-labs@sha256:d4250176a22a73cb8cdeb0cdcd3ea65d39baad1245f2f1dcb5eceadedd0518b8
+FROM alpine:3.21.3@sha256:a8560b36e8b8210634f77d9f7f9efd7ffa463e380b75e2e74aff4511df3ef88c as base
 RUN apk add --no-cache ca-certificates
 RUN adduser -D aws-nuke
 
-FROM ghcr.io/acorn-io/images-mirror/golang:1.21 AS build
+FROM ghcr.io/acorn-io/images-mirror/golang:1.21@sha256:856073656d1a517517792e6cdd2f7a5ef080d3ca2dff33e518c8412f140fdd2d AS build
 COPY / /src
 WORKDIR /src
 ENV CGO_ENABLED=0

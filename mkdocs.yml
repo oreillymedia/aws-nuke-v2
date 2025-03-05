@@ -165,6 +165,8 @@ nav:
     - App Stream Image: resources/app-stream-image.md
     - App Stream Stack Fleet Attachment: resources/app-stream-stack-fleet-attachment.md
     - App Stream Stack: resources/app-stream-stack.md
+    - App Sync Api Association: resources/app-sync-api-association.md
+    - App Sync Domain Name: resources/app-sync-domain-name.md
     - App Sync Graphql Api: resources/app-sync-graphql-api.md
     - Application Auto Scaling Scalable Target: resources/application-auto-scaling-scalable-target.md
     - Athena Data Catalog: resources/athena-data-catalog.md
@@ -540,6 +542,8 @@ nav:
     - Robo Maker Simulation Job: resources/robo-maker-simulation-job.md
     - Route 53 Health Check: resources/route-53-health-check.md
     - Route 53 Hosted Zone: resources/route-53-hosted-zone.md
+    - Route 53 Profile Association: resources/route-53-profile-association.md
+    - Route 53 Profile: resources/route-53-profile.md
     - Route 53 Resolver Endpoint: resources/route-53-resolver-endpoint.md
     - Route 53 Resolver Rule: resources/route-53-resolver-rule.md
     - Route 53 Resource Record Set: resources/route-53-resource-record-set.md
