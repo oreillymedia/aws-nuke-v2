@@ -276,6 +276,7 @@ nav:
     - Dax Subnet Group: resources/dax-subnet-group.md
     - Device Farm Project: resources/device-farm-project.md
     - Directory Service Directory: resources/directory-service-directory.md
+    - Dsql Cluster: resources/dsql-cluster.md
     - Dynamo Db Backup: resources/dynamo-db-backup.md
     - Dynamo Db Table Item: resources/dynamo-db-table-item.md
     - Dynamo Db Table: resources/dynamo-db-table.md
@@ -488,6 +489,7 @@ nav:
     - Msk Cluster: resources/msk-cluster.md
     - Msk Configuration: resources/msk-configuration.md
     - Neptune Cluster: resources/neptune-cluster.md
+    - Neptune Graph: resources/neptune-graph.md
     - Neptune Instance: resources/neptune-instance.md
     - Neptune Snapshot: resources/neptune-snapshot.md
     - Network Manager Connect Peer: resources/network-manager-connect-peer.md
