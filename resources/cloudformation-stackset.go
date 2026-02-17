@@ -8,8 +8,8 @@ import (
 
 	"github.com/sirupsen/logrus"
 
-	"github.com/aws/aws-sdk-go/aws"
-	"github.com/aws/aws-sdk-go/service/cloudformation"
+	"github.com/aws/aws-sdk-go/aws"                    //nolint:staticcheck
+	"github.com/aws/aws-sdk-go/service/cloudformation" //nolint:staticcheck
 	"github.com/aws/aws-sdk-go/service/cloudformation/cloudformationiface"
 
 	"github.com/ekristen/libnuke/pkg/registry"
@@ -113,7 +113,7 @@ func (cfs *CloudFormationStackSet) waitForStackSetOperation(operationID string) 
 		logrus.Infof("Got stackInstance operation status on stackSet=%s operationID=%s status=%s",
 			*cfs.stackSetSummary.StackSetName, operationID, *result.StackSetOperation.Status)
 
-		if *result.StackSetOperation.Status == cloudformation.StackSetOperationResultStatusSucceeded {
+		if *result.StackSetOperation.Status == cloudformation.StackSetOperationResultStatusSucceeded { //nolint:staticcheck
 			return nil
 		} else if *result.StackSetOperation.Status == cloudformation.StackSetOperationResultStatusFailed ||
 			*result.StackSetOperation.Status == cloudformation.StackSetOperationResultStatusCancelled {

@@ -3,7 +3,7 @@ package resources
 import (
 	"context"
 
-	"github.com/aws/aws-sdk-go/service/apprunner"
+	"github.com/aws/aws-sdk-go/service/apprunner" //nolint:staticcheck
 
 	"github.com/ekristen/libnuke/pkg/registry"
 	"github.com/ekristen/libnuke/pkg/resource"
@@ -76,4 +76,8 @@ func (f *AppRunnerConnection) Properties() types.Properties {
 	properties.Set("ConnectionArn", f.ConnectionArn)
 	properties.Set("ConnectionName", f.ConnectionName)
 	return properties
+}
+
+func (f *AppRunnerConnection) String() string {
+	return *f.ConnectionName
 }

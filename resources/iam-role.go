@@ -10,8 +10,8 @@ import (
 	"github.com/gotidy/ptr"
 	"github.com/sirupsen/logrus"
 
-	"github.com/aws/aws-sdk-go/aws/awserr"
-	"github.com/aws/aws-sdk-go/service/iam"
+	"github.com/aws/aws-sdk-go/aws/awserr"  //nolint:staticcheck
+	"github.com/aws/aws-sdk-go/service/iam" //nolint:staticcheck
 	"github.com/aws/aws-sdk-go/service/iam/iamiface"
 
 	liberror "github.com/ekristen/libnuke/pkg/errors"
@@ -87,7 +87,7 @@ func (r *IAMRole) HandleWait(_ context.Context) error {
 		return err
 	}
 
-	if *result.Status == iam.DeletionTaskStatusTypeSucceeded {
+	if *result.Status == iam.DeletionTaskStatusTypeSucceeded { //nolint:staticcheck
 		return nil
 	} else if *result.Status == iam.DeletionTaskStatusTypeFailed {
 		if result.Reason.RoleUsageList != nil {

@@ -3,9 +3,9 @@ package resources
 import (
 	"context"
 
-	"github.com/aws/aws-sdk-go/aws"
-	"github.com/aws/aws-sdk-go/service/mediastore"
-	"github.com/aws/aws-sdk-go/service/mediastoredata"
+	"github.com/aws/aws-sdk-go/aws"                    //nolint:staticcheck
+	"github.com/aws/aws-sdk-go/service/mediastore"     //nolint:staticcheck
+	"github.com/aws/aws-sdk-go/service/mediastoredata" //nolint:staticcheck
 
 	"github.com/ekristen/libnuke/pkg/registry"
 	"github.com/ekristen/libnuke/pkg/resource"
@@ -31,7 +31,7 @@ func (l *MediaStoreDataItemsLister) List(_ context.Context, o interface{}) ([]re
 
 	containerSvc := mediastore.New(opts.Session)
 	svc := mediastoredata.New(opts.Session)
-	svc.ClientInfo.SigningName = "mediastore"
+	svc.SigningName = "mediastore"
 
 	resources := make([]resource.Resource, 0)
 	var containers []*mediastore.Container

@@ -3,7 +3,7 @@ package resources
 import (
 	"context"
 
-	"github.com/aws/aws-sdk-go/service/xray"
+	"github.com/aws/aws-sdk-go/service/xray" //nolint:staticcheck
 
 	"github.com/ekristen/libnuke/pkg/registry"
 	"github.com/ekristen/libnuke/pkg/resource"
@@ -80,4 +80,8 @@ func (f *XRayGroup) Properties() types.Properties {
 		Set("GroupARN", f.groupARN)
 
 	return properties
+}
+
+func (f *XRayGroup) String() string {
+	return *f.groupName
 }

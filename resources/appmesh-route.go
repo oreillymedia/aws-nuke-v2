@@ -3,7 +3,7 @@ package resources
 import (
 	"context"
 
-	"github.com/aws/aws-sdk-go/service/appmesh"
+	"github.com/aws/aws-sdk-go/service/appmesh" //nolint:staticcheck
 
 	"github.com/ekristen/libnuke/pkg/registry"
 	"github.com/ekristen/libnuke/pkg/resource"
@@ -118,4 +118,8 @@ func (f *AppMeshRoute) Properties() types.Properties {
 		Set("Name", f.routeName)
 
 	return properties
+}
+
+func (f *AppMeshRoute) String() string {
+	return *f.routeName
 }

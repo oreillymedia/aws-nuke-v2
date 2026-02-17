@@ -4,7 +4,7 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/aws/aws-sdk-go/service/sns"
+	"github.com/aws/aws-sdk-go/service/sns" //nolint:staticcheck
 
 	"github.com/ekristen/libnuke/pkg/registry"
 	"github.com/ekristen/libnuke/pkg/resource"
@@ -66,6 +66,13 @@ type SNSSubscription struct {
 	ARN      *string
 	Owner    *string
 	TopicARN *string
+}
+
+func (r *SNSSubscription) Filter() error {
+	if *r.ARN == "Deleted" {
+		return fmt.Errorf("subscription %s is already deleted", *r.ARN)
+	}
+	return nil
 }
 
 func (r *SNSSubscription) Remove(_ context.Context) error {

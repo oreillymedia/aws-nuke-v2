@@ -2,15 +2,17 @@ package resources
 
 import (
 	"context"
+	"fmt"
 	"time"
 
 	"github.com/sirupsen/logrus"
 
-	"github.com/aws/aws-sdk-go/service/iam"
+	"github.com/aws/aws-sdk-go/service/iam" //nolint:staticcheck
 	"github.com/aws/aws-sdk-go/service/iam/iamiface"
 
 	"github.com/ekristen/libnuke/pkg/registry"
 	"github.com/ekristen/libnuke/pkg/resource"
+	libsettings "github.com/ekristen/libnuke/pkg/settings"
 	"github.com/ekristen/libnuke/pkg/types"
 
 	"github.com/ekristen/aws-nuke/v3/pkg/nuke"
@@ -24,6 +26,9 @@ func init() {
 		Scope:    nuke.Account,
 		Resource: &IAMUser{},
 		Lister:   &IAMUserLister{},
+		Settings: []string{
+			"IgnorePermissionBoundary",
+		},
 		DependsOn: []string{
 			IAMUserAccessKeyResource,
 			IAMUserHTTPSGitCredentialResource,
@@ -48,10 +53,12 @@ type IAMUser struct {
 	HasPermissionBoundary  bool
 	PermissionBoundaryARN  *string
 	PermissionBoundaryType *string
+	settings               *libsettings.Setting
 }
 
 func (r *IAMUser) Remove(_ context.Context) error {
-	if r.HasPermissionBoundary {
+	if r.HasPermissionBoundary && !r.settings.GetBool("IgnorePermissionBoundary") {
+		fmt.Println("Removing permission boundary for user", *r.Name)
 		_, err := r.svc.DeleteUserPermissionsBoundary(&iam.DeleteUserPermissionsBoundaryInput{
 			UserName: r.Name,
 		})
@@ -76,6 +83,10 @@ func (r *IAMUser) String() string {
 
 func (r *IAMUser) Properties() types.Properties {
 	return types.NewPropertiesFromStruct(r)
+}
+
+func (r *IAMUser) Settings(settings *libsettings.Setting) {
+	r.settings = settings
 }
 
 // --------------

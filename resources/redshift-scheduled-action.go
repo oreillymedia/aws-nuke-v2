@@ -3,7 +3,7 @@ package resources
 import (
 	"context"
 
-	"github.com/aws/aws-sdk-go/service/redshift"
+	"github.com/aws/aws-sdk-go/service/redshift" //nolint:staticcheck
 
 	"github.com/ekristen/libnuke/pkg/registry"
 	"github.com/ekristen/libnuke/pkg/resource"
@@ -73,4 +73,8 @@ func (f *RedshiftScheduledAction) Properties() types.Properties {
 	properties := types.NewProperties()
 	properties.Set("scheduledActionName", f.scheduledActionName)
 	return properties
+}
+
+func (f *RedshiftScheduledAction) String() string {
+	return *f.scheduledActionName
 }

@@ -3,7 +3,7 @@ package resources
 import (
 	"context"
 
-	"github.com/aws/aws-sdk-go/service/securityhub"
+	"github.com/aws/aws-sdk-go/service/securityhub" //nolint:staticcheck
 
 	"github.com/ekristen/libnuke/pkg/registry"
 	"github.com/ekristen/libnuke/pkg/resource"
@@ -59,6 +59,10 @@ func (hub *SecurityHub) Properties() types.Properties {
 	properties := types.NewProperties()
 	properties.Set("Arn", hub.id)
 	return properties
+}
+
+func (hub *SecurityHub) String() string {
+	return *hub.id
 }
 
 func (hub *SecurityHub) Remove(_ context.Context) error {

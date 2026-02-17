@@ -5,8 +5,8 @@ import (
 
 	"github.com/sirupsen/logrus"
 
-	"github.com/aws/aws-sdk-go/aws"
-	"github.com/aws/aws-sdk-go/service/ecs"
+	"github.com/aws/aws-sdk-go/aws"         //nolint:staticcheck
+	"github.com/aws/aws-sdk-go/service/ecs" //nolint:staticcheck
 	"github.com/aws/aws-sdk-go/service/ecs/ecsiface"
 
 	"github.com/ekristen/libnuke/pkg/registry"
@@ -128,6 +128,10 @@ func (t *ECSTask) Properties() types.Properties {
 	}
 
 	return properties
+}
+
+func (t *ECSTask) String() string {
+	return *t.taskARN
 }
 
 func (t *ECSTask) Remove(_ context.Context) error {

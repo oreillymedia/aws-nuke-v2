@@ -3,7 +3,7 @@ package resources
 import (
 	"context"
 
-	"github.com/aws/aws-sdk-go/service/cloudfront"
+	"github.com/aws/aws-sdk-go/service/cloudfront" //nolint:staticcheck
 
 	"github.com/ekristen/libnuke/pkg/registry"
 	"github.com/ekristen/libnuke/pkg/resource"
@@ -70,4 +70,8 @@ func (f *CloudFrontOriginAccessIdentity) Properties() types.Properties {
 	properties := types.NewProperties()
 	properties.Set("ID", f.ID)
 	return properties
+}
+
+func (f *CloudFrontOriginAccessIdentity) String() string {
+	return *f.ID
 }

@@ -4,7 +4,7 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/aws/aws-sdk-go/service/ec2"
+	"github.com/aws/aws-sdk-go/service/ec2" //nolint:staticcheck
 
 	"github.com/ekristen/libnuke/pkg/registry"
 	"github.com/ekristen/libnuke/pkg/resource"
@@ -58,8 +58,12 @@ type EC2VPCPeeringConnection struct {
 }
 
 func (p *EC2VPCPeeringConnection) Filter() error {
-	if *p.status == awsutil.StateDeleting || *p.status == awsutil.StateDeleted {
-		return fmt.Errorf("already deleted")
+	if *p.status == awsutil.StateDeleting ||
+		*p.status == awsutil.StateDeleted ||
+		*p.status == awsutil.StateRejected ||
+		*p.status == awsutil.StateExpired ||
+		*p.status == awsutil.StateFailed {
+		return fmt.Errorf("already removed (%s)", *p.status)
 	}
 
 	return nil

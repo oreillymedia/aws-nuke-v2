@@ -4,8 +4,8 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/aws/aws-sdk-go/aws"
-	"github.com/aws/aws-sdk-go/service/route53"
+	"github.com/aws/aws-sdk-go/aws"             //nolint:staticcheck
+	"github.com/aws/aws-sdk-go/service/route53" //nolint:staticcheck
 
 	"github.com/ekristen/libnuke/pkg/registry"
 	"github.com/ekristen/libnuke/pkg/resource"
@@ -124,4 +124,8 @@ func (tp *Route53TrafficPolicy) Properties() types.Properties {
 	return types.NewProperties().
 		Set("ID", *tp.id).
 		Set("Name", *tp.name)
+}
+
+func (tp *Route53TrafficPolicy) String() string {
+	return *tp.name
 }

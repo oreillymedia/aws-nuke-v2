@@ -3,9 +3,9 @@ package resources
 import (
 	"context"
 
-	"github.com/aws/aws-sdk-go/aws"
-	"github.com/aws/aws-sdk-go/service/waf"
-	"github.com/aws/aws-sdk-go/service/wafregional"
+	"github.com/aws/aws-sdk-go/aws"                 //nolint:staticcheck
+	"github.com/aws/aws-sdk-go/service/waf"         //nolint:staticcheck
+	"github.com/aws/aws-sdk-go/service/wafregional" //nolint:staticcheck
 
 	"github.com/ekristen/libnuke/pkg/registry"
 	"github.com/ekristen/libnuke/pkg/resource"
@@ -105,4 +105,8 @@ func (r *WAFRegionalRateBasedRulePredicate) Properties() types.Properties {
 		Set("Type", r.predicate.Type).
 		Set("Negated", r.predicate.Negated).
 		Set("DataID", r.predicate.DataId)
+}
+
+func (r *WAFRegionalRateBasedRulePredicate) String() string {
+	return *r.ruleID
 }

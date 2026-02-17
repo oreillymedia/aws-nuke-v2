@@ -5,8 +5,8 @@ import (
 
 	"github.com/sirupsen/logrus"
 
-	"github.com/aws/aws-sdk-go/aws"
-	"github.com/aws/aws-sdk-go/service/appconfig"
+	"github.com/aws/aws-sdk-go/aws"               //nolint:staticcheck
+	"github.com/aws/aws-sdk-go/service/appconfig" //nolint:staticcheck
 
 	"github.com/ekristen/libnuke/pkg/registry"
 	"github.com/ekristen/libnuke/pkg/resource"
@@ -87,4 +87,8 @@ func (f *AppConfigEnvironment) Properties() types.Properties {
 		Set("ApplicationID", f.applicationID).
 		Set("ID", f.id).
 		Set("Name", f.name)
+}
+
+func (f *AppConfigEnvironment) String() string {
+	return *f.name
 }

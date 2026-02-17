@@ -3,8 +3,8 @@ package resources
 import (
 	"context"
 
-	"github.com/aws/aws-sdk-go/aws"
-	"github.com/aws/aws-sdk-go/service/autoscalingplans"
+	"github.com/aws/aws-sdk-go/aws"                      //nolint:staticcheck
+	"github.com/aws/aws-sdk-go/service/autoscalingplans" //nolint:staticcheck
 
 	"github.com/ekristen/libnuke/pkg/registry"
 	"github.com/ekristen/libnuke/pkg/resource"
@@ -29,7 +29,7 @@ func (l *AutoScalingPlansScalingPlanLister) List(_ context.Context, o interface{
 	opts := o.(*nuke.ListerOpts)
 
 	svc := autoscalingplans.New(opts.Session)
-	svc.ClientInfo.SigningName = "autoscaling-plans"
+	svc.SigningName = "autoscaling-plans"
 	resources := make([]resource.Resource, 0)
 
 	params := &autoscalingplans.DescribeScalingPlansInput{

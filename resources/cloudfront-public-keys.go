@@ -4,7 +4,7 @@ import (
 	"context"
 	"time"
 
-	"github.com/aws/aws-sdk-go/service/cloudfront"
+	"github.com/aws/aws-sdk-go/service/cloudfront" //nolint:staticcheck
 
 	"github.com/ekristen/libnuke/pkg/registry"
 	"github.com/ekristen/libnuke/pkg/resource"
@@ -87,4 +87,8 @@ func (f *CloudFrontPublicKey) Properties() types.Properties {
 	properties.Set("Name", f.name)
 	properties.Set("CreatedTime", f.createdTime.Format(time.RFC3339))
 	return properties
+}
+
+func (f *CloudFrontPublicKey) String() string {
+	return *f.name
 }

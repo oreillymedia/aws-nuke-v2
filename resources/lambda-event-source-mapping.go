@@ -3,7 +3,7 @@ package resources
 import (
 	"context"
 
-	"github.com/aws/aws-sdk-go/service/lambda"
+	"github.com/aws/aws-sdk-go/service/lambda" //nolint:staticcheck
 
 	"github.com/ekristen/libnuke/pkg/registry"
 	"github.com/ekristen/libnuke/pkg/resource"
@@ -76,4 +76,8 @@ func (m *LambdaEventSourceMapping) Properties() types.Properties {
 	properties.Set("State", m.mapping.State)
 
 	return properties
+}
+
+func (m *LambdaEventSourceMapping) String() string {
+	return *m.mapping.UUID
 }

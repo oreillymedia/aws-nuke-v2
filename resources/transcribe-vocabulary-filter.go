@@ -4,8 +4,8 @@ import (
 	"context"
 	"time"
 
-	"github.com/aws/aws-sdk-go/aws"
-	"github.com/aws/aws-sdk-go/service/transcribeservice"
+	"github.com/aws/aws-sdk-go/aws"                       //nolint:staticcheck
+	"github.com/aws/aws-sdk-go/service/transcribeservice" //nolint:staticcheck
 
 	"github.com/ekristen/libnuke/pkg/registry"
 	"github.com/ekristen/libnuke/pkg/resource"
@@ -85,4 +85,8 @@ func (r *TranscribeVocabularyFilter) Properties() types.Properties {
 	properties.Set("LanguageCode", r.languageCode)
 	properties.Set("LastModifiedTime", r.lastModifiedTime)
 	return properties
+}
+
+func (r *TranscribeVocabularyFilter) String() string {
+	return *r.name
 }

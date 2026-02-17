@@ -7,7 +7,7 @@ import (
 
 	"github.com/gotidy/ptr"
 
-	"github.com/aws/aws-sdk-go/service/route53resolver"
+	"github.com/aws/aws-sdk-go/service/route53resolver" //nolint:staticcheck
 	"github.com/aws/aws-sdk-go/service/route53resolver/route53resolveriface"
 
 	"github.com/ekristen/libnuke/pkg/registry"
@@ -63,6 +63,7 @@ func (l *Route53ResolverRuleLister) List(_ context.Context, o interface{}) ([]re
 				ID:         rule.Id,
 				Name:       rule.Name,
 				DomainName: rule.DomainName,
+				OwnerID:    rule.OwnerId,
 			})
 		}
 
@@ -83,6 +84,7 @@ type Route53ResolverRule struct {
 	ID         *string
 	Name       *string
 	DomainName *string
+	OwnerID    *string
 }
 
 // Filter removes resources automatically from being nuked

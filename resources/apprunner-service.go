@@ -3,7 +3,7 @@ package resources
 import (
 	"context"
 
-	"github.com/aws/aws-sdk-go/service/apprunner"
+	"github.com/aws/aws-sdk-go/service/apprunner" //nolint:staticcheck
 
 	"github.com/ekristen/libnuke/pkg/registry"
 	"github.com/ekristen/libnuke/pkg/resource"
@@ -79,4 +79,8 @@ func (f *AppRunnerService) Properties() types.Properties {
 	properties.Set("ServiceId", f.ServiceID)
 	properties.Set("ServiceName", f.ServiceName)
 	return properties
+}
+
+func (f *AppRunnerService) String() string {
+	return *f.ServiceName
 }

@@ -9,7 +9,9 @@ import (
 	"github.com/gotidy/ptr"
 	"github.com/stretchr/testify/assert"
 
-	"github.com/aws/aws-sdk-go/service/iam"
+	"github.com/aws/aws-sdk-go/service/iam" //nolint:staticcheck
+
+	libsettings "github.com/ekristen/libnuke/pkg/settings"
 
 	"github.com/ekristen/aws-nuke/v3/mocks/mock_iamiface"
 )
@@ -68,6 +70,7 @@ func Test_Mock_IAMUser_Remove(t *testing.T) {
 		svc:                   mockIAM,
 		Name:                  ptr.String("foobar"),
 		HasPermissionBoundary: true,
+		settings:              &libsettings.Setting{},
 	}
 
 	err := iamUser.Remove(context.TODO())

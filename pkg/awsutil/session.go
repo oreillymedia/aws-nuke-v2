@@ -13,17 +13,18 @@ import (
 
 	awsv2 "github.com/aws/aws-sdk-go-v2/aws"
 	credentialsv2 "github.com/aws/aws-sdk-go-v2/credentials"
-	"github.com/aws/aws-sdk-go/aws"
-	"github.com/aws/aws-sdk-go/aws/credentials"
-	"github.com/aws/aws-sdk-go/aws/credentials/stscreds"
-	"github.com/aws/aws-sdk-go/aws/endpoints"
-	"github.com/aws/aws-sdk-go/aws/request"
-	"github.com/aws/aws-sdk-go/aws/session"
-	"github.com/aws/aws-sdk-go/service/iottwinmaker"
-	"github.com/aws/aws-sdk-go/service/s3control"
+	"github.com/aws/aws-sdk-go/aws"                      //nolint:staticcheck
+	"github.com/aws/aws-sdk-go/aws/credentials"          //nolint:staticcheck
+	"github.com/aws/aws-sdk-go/aws/credentials/stscreds" //nolint:staticcheck
+	"github.com/aws/aws-sdk-go/aws/endpoints"            //nolint:staticcheck
+	"github.com/aws/aws-sdk-go/aws/request"              //nolint:staticcheck
+	"github.com/aws/aws-sdk-go/aws/session"              //nolint:staticcheck
+	"github.com/aws/aws-sdk-go/service/iottwinmaker"     //nolint:staticcheck
+	"github.com/aws/aws-sdk-go/service/s3control"        //nolint:staticcheck
+
+	liberrors "github.com/ekristen/libnuke/pkg/errors"
 
 	"github.com/ekristen/aws-nuke/v3/pkg/config"
-	liberrors "github.com/ekristen/libnuke/pkg/errors"
 )
 
 const (
@@ -275,7 +276,7 @@ func skipGlobalHandler(global bool) func(r *request.Request) {
 						service))
 			} else {
 				host := r.HTTPRequest.URL.Hostname()
-				_, err := net.LookupHost(host)
+				_, err := net.DefaultResolver.LookupHost(r.Context(), host)
 				if err != nil {
 					log.Debug(err)
 					r.Error = liberrors.ErrUnknownEndpoint(

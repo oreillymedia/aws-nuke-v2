@@ -2,12 +2,11 @@ package resources
 
 import (
 	"context"
-
 	"fmt"
 	"time"
 
-	"github.com/aws/aws-sdk-go/aws"
-	"github.com/aws/aws-sdk-go/service/rds"
+	"github.com/aws/aws-sdk-go/aws"         //nolint:staticcheck
+	"github.com/aws/aws-sdk-go/service/rds" //nolint:staticcheck
 
 	"github.com/ekristen/libnuke/pkg/registry"
 	"github.com/ekristen/libnuke/pkg/resource"
@@ -17,6 +16,8 @@ import (
 )
 
 const RDSSnapshotResource = "RDSSnapshot"
+
+const RDSAutomatedSnapshot = "automated"
 
 func init() {
 	registry.Register(&registry.Registration{
@@ -65,7 +66,7 @@ type RDSSnapshot struct {
 }
 
 func (i *RDSSnapshot) Filter() error {
-	if *i.snapshot.SnapshotType == "automated" {
+	if *i.snapshot.SnapshotType == RDSAutomatedSnapshot {
 		return fmt.Errorf("cannot delete automated snapshots")
 	}
 	return nil

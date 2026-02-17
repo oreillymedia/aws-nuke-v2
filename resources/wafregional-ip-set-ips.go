@@ -3,9 +3,9 @@ package resources
 import (
 	"context"
 
-	"github.com/aws/aws-sdk-go/aws"
-	"github.com/aws/aws-sdk-go/service/waf"
-	"github.com/aws/aws-sdk-go/service/wafregional"
+	"github.com/aws/aws-sdk-go/aws"                 //nolint:staticcheck
+	"github.com/aws/aws-sdk-go/service/waf"         //nolint:staticcheck
+	"github.com/aws/aws-sdk-go/service/wafregional" //nolint:staticcheck
 
 	"github.com/ekristen/libnuke/pkg/registry"
 	"github.com/ekristen/libnuke/pkg/resource"
@@ -101,4 +101,8 @@ func (r *WAFRegionalIPSetIP) Properties() types.Properties {
 		Set("IPSetID", r.ipSetID).
 		Set("Type", r.descriptor.Type).
 		Set("Value", r.descriptor.Value)
+}
+
+func (r *WAFRegionalIPSetIP) String() string {
+	return *r.ipSetID
 }

@@ -3,7 +3,7 @@ package resources
 import (
 	"context"
 
-	"github.com/aws/aws-sdk-go/service/codegurureviewer"
+	"github.com/aws/aws-sdk-go/service/codegurureviewer" //nolint:staticcheck
 
 	"github.com/ekristen/libnuke/pkg/registry"
 	"github.com/ekristen/libnuke/pkg/resource"
@@ -78,4 +78,8 @@ func (r *CodeGuruReviewerRepositoryAssociation) Remove(_ context.Context) error 
 
 func (r *CodeGuruReviewerRepositoryAssociation) Properties() types.Properties {
 	return types.NewPropertiesFromStruct(r)
+}
+
+func (r *CodeGuruReviewerRepositoryAssociation) String() string {
+	return *r.Name
 }

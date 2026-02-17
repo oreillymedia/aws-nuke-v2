@@ -3,8 +3,8 @@ package resources
 import (
 	"context"
 
-	"github.com/aws/aws-sdk-go/aws"
-	"github.com/aws/aws-sdk-go/service/appconfig"
+	"github.com/aws/aws-sdk-go/aws"               //nolint:staticcheck
+	"github.com/aws/aws-sdk-go/service/appconfig" //nolint:staticcheck
 
 	"github.com/ekristen/libnuke/pkg/registry"
 	"github.com/ekristen/libnuke/pkg/resource"
@@ -71,4 +71,8 @@ func (f *AppConfigApplication) Properties() types.Properties {
 	return types.NewProperties().
 		Set("ID", f.id).
 		Set("Name", f.name)
+}
+
+func (f *AppConfigApplication) String() string {
+	return *f.name
 }

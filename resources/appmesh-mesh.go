@@ -3,8 +3,8 @@ package resources
 import (
 	"context"
 
-	"github.com/aws/aws-sdk-go/aws"
-	"github.com/aws/aws-sdk-go/service/appmesh"
+	"github.com/aws/aws-sdk-go/aws"             //nolint:staticcheck
+	"github.com/aws/aws-sdk-go/service/appmesh" //nolint:staticcheck
 
 	"github.com/ekristen/libnuke/pkg/registry"
 	"github.com/ekristen/libnuke/pkg/resource"
@@ -77,4 +77,8 @@ func (f *AppMeshMesh) Properties() types.Properties {
 		Set("MeshName", f.meshName)
 
 	return properties
+}
+
+func (f *AppMeshMesh) String() string {
+	return *f.meshName
 }

@@ -3,7 +3,7 @@
 Preferred installation order is the following:
 
 1. [GitHub Release](#github-releases-preferred)
-2. [Homebrew Tap](#ekristens-homebrew-tap-macoslinux)
+2. [Homebrew Tap](#homebrew-tap-macos)
 3. [Homebrew Core](#homebrew-core-macoslinux)
 
 Docker images are also available via the GitHub Container Registry.
@@ -18,6 +18,14 @@ You can download pre-compiled binaries from the [releases](https://github.com/ek
 
 ```console
 dist install ekristen/aws-nuke
+```
+
+## Mise
+
+If you are an enthusiast user of [mise](https://github.com/jdx/mise), you can install it with a command like:
+
+```console
+mise use -g aws-nuke@latest
 ```
 
 ## Homebrew Tap (macOS)

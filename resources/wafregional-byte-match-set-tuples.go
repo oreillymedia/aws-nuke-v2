@@ -3,9 +3,9 @@ package resources
 import (
 	"context"
 
-	"github.com/aws/aws-sdk-go/aws"
-	"github.com/aws/aws-sdk-go/service/waf"
-	"github.com/aws/aws-sdk-go/service/wafregional"
+	"github.com/aws/aws-sdk-go/aws"                 //nolint:staticcheck
+	"github.com/aws/aws-sdk-go/service/waf"         //nolint:staticcheck
+	"github.com/aws/aws-sdk-go/service/wafregional" //nolint:staticcheck
 
 	"github.com/ekristen/libnuke/pkg/registry"
 	"github.com/ekristen/libnuke/pkg/resource"
@@ -102,4 +102,8 @@ func (r *WAFRegionalByteMatchSetIP) Properties() types.Properties {
 		Set("FieldToMatchType", r.tuple.FieldToMatch.Type).
 		Set("FieldToMatchData", r.tuple.FieldToMatch.Data).
 		Set("TargetString", r.tuple.TargetString)
+}
+
+func (r *WAFRegionalByteMatchSetIP) String() string {
+	return *r.matchSetID
 }

@@ -2,11 +2,12 @@ package resources
 
 import (
 	"context"
+	"fmt"
 
 	"github.com/sirupsen/logrus"
 
-	"github.com/aws/aws-sdk-go/aws"
-	"github.com/aws/aws-sdk-go/service/appconfig"
+	"github.com/aws/aws-sdk-go/aws"               //nolint:staticcheck
+	"github.com/aws/aws-sdk-go/service/appconfig" //nolint:staticcheck
 
 	"github.com/ekristen/libnuke/pkg/registry"
 	"github.com/ekristen/libnuke/pkg/resource"
@@ -89,4 +90,8 @@ func (f *AppConfigHostedConfigurationVersion) Properties() types.Properties {
 		Set("ApplicationID", f.applicationID).
 		Set("ConfigurationProfileID", f.configurationProfileID).
 		Set("VersionNumber", f.versionNumber)
+}
+
+func (f *AppConfigHostedConfigurationVersion) String() string {
+	return fmt.Sprintf("%d", *f.versionNumber)
 }

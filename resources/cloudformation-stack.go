@@ -10,9 +10,9 @@ import (
 	"github.com/gotidy/ptr"
 	"github.com/sirupsen/logrus"
 
-	"github.com/aws/aws-sdk-go/aws"
-	"github.com/aws/aws-sdk-go/aws/awserr"
-	"github.com/aws/aws-sdk-go/service/cloudformation"
+	"github.com/aws/aws-sdk-go/aws"                    //nolint:staticcheck
+	"github.com/aws/aws-sdk-go/aws/awserr"             //nolint:staticcheck
+	"github.com/aws/aws-sdk-go/service/cloudformation" //nolint:staticcheck
 	"github.com/aws/aws-sdk-go/service/cloudformation/cloudformationiface"
 
 	"github.com/aws/aws-sdk-go-v2/service/iam"
@@ -188,7 +188,8 @@ func (r *CloudFormationStack) removeWithAttempts(ctx context.Context, attempt in
 						*r.Name, attempt, r.maxDeleteAttempts)
 					return err
 				}
-			} else if awsErr.Message() == fmt.Sprintf("Stack [%s] cannot be deleted while TerminationProtection is enabled", *r.Name) {
+			} else if strings.Contains(awsErr.Message(), "cannot be deleted while TerminationProtection is enabled") &&
+				strings.Contains(awsErr.Message(), *r.Name) {
 				// check if the setting for the resource is set to allow deletion protection to be disabled
 				if r.settings.GetBool("DisableDeletionProtection") {
 					r.logger.Infof("CloudFormationStack stackName=%s attempt=%d maxAttempts=%d updating termination protection",
@@ -260,7 +261,7 @@ func (r *CloudFormationStack) doRemove() error { //nolint:gocyclo
 	}
 	stack := o.Stacks[0]
 
-	if *stack.StackStatus == cloudformation.StackStatusDeleteComplete {
+	if *stack.StackStatus == cloudformation.StackStatusDeleteComplete { //nolint:staticcheck
 		// stack already deleted, no need to re-delete
 		return nil
 	} else if *stack.StackStatus == cloudformation.StackStatusDeleteInProgress {

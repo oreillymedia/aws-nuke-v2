@@ -3,8 +3,8 @@ package resources
 import (
 	"context"
 
-	"github.com/aws/aws-sdk-go/aws"
-	"github.com/aws/aws-sdk-go/service/codeguruprofiler"
+	"github.com/aws/aws-sdk-go/aws"                      //nolint:staticcheck
+	"github.com/aws/aws-sdk-go/service/codeguruprofiler" //nolint:staticcheck
 
 	"github.com/ekristen/libnuke/pkg/registry"
 	"github.com/ekristen/libnuke/pkg/resource"
@@ -75,4 +75,8 @@ func (r *CodeGuruProfilingGroup) Remove(_ context.Context) error {
 
 func (r *CodeGuruProfilingGroup) Properties() types.Properties {
 	return types.NewPropertiesFromStruct(r)
+}
+
+func (r *CodeGuruProfilingGroup) String() string {
+	return *r.Name
 }

@@ -3,12 +3,13 @@ package resources
 import (
 	"context"
 
-	"github.com/aws/aws-sdk-go/service/cloudfront"
+	"github.com/aws/aws-sdk-go/service/cloudfront" //nolint:staticcheck
 
 	"github.com/ekristen/libnuke/pkg/registry"
 	"github.com/ekristen/libnuke/pkg/resource"
 	"github.com/ekristen/libnuke/pkg/types"
 
+	"github.com/ekristen/aws-nuke/v3/pkg/awsutil"
 	"github.com/ekristen/aws-nuke/v3/pkg/nuke"
 )
 
@@ -39,7 +40,7 @@ func (l *CloudFrontOriginRequestPolicyLister) List(_ context.Context, o interfac
 		}
 
 		for _, item := range resp.OriginRequestPolicyList.Items {
-			if *item.Type == "custom" {
+			if *item.Type == awsutil.Custom {
 				resources = append(resources, &CloudFrontOriginRequestPolicy{
 					svc: svc,
 					ID:  item.OriginRequestPolicy.Id,
@@ -82,4 +83,8 @@ func (f *CloudFrontOriginRequestPolicy) Properties() types.Properties {
 	properties := types.NewProperties()
 	properties.Set("ID", f.ID)
 	return properties
+}
+
+func (f *CloudFrontOriginRequestPolicy) String() string {
+	return *f.ID
 }

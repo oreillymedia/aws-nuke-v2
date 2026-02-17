@@ -2,12 +2,11 @@ package resources
 
 import (
 	"context"
-
 	"fmt"
 	"time"
 
-	"github.com/aws/aws-sdk-go/aws"
-	"github.com/aws/aws-sdk-go/service/signer"
+	"github.com/aws/aws-sdk-go/aws"            //nolint:staticcheck
+	"github.com/aws/aws-sdk-go/service/signer" //nolint:staticcheck
 
 	"github.com/ekristen/libnuke/pkg/registry"
 	"github.com/ekristen/libnuke/pkg/resource"
@@ -107,4 +106,8 @@ func (j *SignerSigningJob) Properties() types.Properties {
 	properties.Set("JobOwner", j.jobOwner)
 	properties.Set("JobInvoker", j.jobInvoker)
 	return properties
+}
+
+func (j *SignerSigningJob) String() string {
+	return *j.jobID
 }
