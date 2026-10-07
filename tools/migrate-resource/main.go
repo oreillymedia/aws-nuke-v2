@@ -54,7 +54,7 @@ func main() {
 	match := regexp.MustCompile(`register\("(?P<resource>.*)",\s?(?P<function>\w+)(,)?(\s+mapCloudControl\("(?P<cc>.*)"\))?`)
 	funcMatch := regexp.MustCompile(`func List.*{`)
 
-	filename := filepath.Join(originalSourceDir, args[1]+".go")
+	filename := filepath.Clean(filepath.Join(originalSourceDir, args[1]+".go"))
 
 	originalFileContents, err := os.ReadFile(filename)
 	if err != nil {
