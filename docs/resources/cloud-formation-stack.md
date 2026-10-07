@@ -37,6 +37,7 @@ The string value is always what is used in the output of the log format when a r
 
 - `DisableDeletionProtection`
 - `CreateRoleToDeleteStack`
+- `UseCurrentRoleToDeleteStack`
 
 
 ### DisableDeletionProtection
@@ -58,5 +59,16 @@ DisableDeletionProtection
 
 ```text
 CreateRoleToDeleteStack
+```
+
+
+### UseCurrentRoleToDeleteStack
+
+!!! note
+    There is currently no description for this setting. Often times settings are fairly self-explanatory. However, we
+    are working on adding descriptions for all settings.
+
+```text
+UseCurrentRoleToDeleteStack
 ```
 

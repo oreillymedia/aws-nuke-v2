@@ -30,7 +30,7 @@ func main() { //nolint:funlen,gocyclo
 		panic("no arguments given")
 	}
 
-	upstreamDirectory := filepath.Join(args[0], "resources")
+	upstreamDirectory := filepath.Clean(filepath.Join(args[0], "resources"))
 
 	var upstreamResourceFiles []string
 	var upstreamResourceTypes []string
@@ -53,7 +53,7 @@ func main() { //nolint:funlen,gocyclo
 	}
 
 	for _, file := range upstreamResourceFiles {
-		originalFileContents, err := os.ReadFile(filepath.Join(upstreamDirectory, file))
+		originalFileContents, err := os.ReadFile(filepath.Clean(filepath.Join(upstreamDirectory, file)))
 		if err != nil {
 			panic(err)
 		}
